@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Kompetensi Penggajian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Pastikan Poppins ter-apply sempurna */
+        body { font-family: 'Poppins', sans-serif; }
+        
+        /* Custom styling untuk radio button modern */
+        .option-label input:checked + div {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            transform: scale(1.01);
+        }
+        .option-label input:checked + div .radio-circle {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+            box-shadow: inset 0 0 0 4px #eff6ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4 antialiased">
+
+    <div class="w-full max-w-3xl mb-8 text-center">
+        <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">Portal Ujian Evaluasi</h1>
+        <p class="text-slate-500 mt-2 font-medium">Sistem Ujian Kompetensi Materi Penggajian</p>
+    </div>
+
+    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 w-full max-w-3xl relative overflow-hidden">
+        
+        <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+            <svg class="animate-spin h-12 w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p id="loadingText" class="text-slate-700 font-semibold text-lg">Memproses data...</p>
+        </div>
+
+        <div id="loginSection" class="text-center py-8">
+            <div class="w-24 h-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Verifikasi Peserta</h2>
+            <p class="text-slate-500 mb-10 font-medium">Silakan masukkan NIM akhir Anda untuk memulai tes.</p>
+            
+            <div class="max-w-xs mx-auto text-left">
+                <label for="nimInput" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">NIM Akhir</label>
+                <input type="text" id="nimInput" class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 focus:outline-none transition-colors mb-5 text-center font-bold text-xl" placeholder="Contoh: 31" autocomplete="off">
+                <button id="btnMulai" onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 hidden">
+                    Mulai Ujian Sekarang
+                </button>
+                <div id="errorBox" class="bg-red-50 text-red-600 border border-red-200 text-sm p-4 rounded-xl mt-5 hidden">
+                    <p id="errorMsg" class="font-semibold text-center"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="quizSection" class="hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b border-slate-100 pb-5 gap-4">
+                <div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Peserta Ujian</p>
+                    <p id="studentNameDisplay" class="font-bold text-slate-800 text-xl"></p>
+                </div>
+                <div class="w-full md:w-auto text-left md:text-right">
+                    <div class="inline-flex items-center bg-blue-50 text-blue-700 text-sm font-bold px-4 py-2 rounded-xl border border-blue-100">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Soal <span id="currentQuestionNum" class="mx-1">1</span> dari <span id="totalQuestionsNum" class="ml-1">10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-100 rounded-full h-2.5 mb-8 overflow-hidden">
+                <div id="progressBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 10%"></div>
+            </div>
+
+            <div id="questionContainer" class="mb-8 min-h-[300px]">
+                </div>
+
+            <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-8 pt-6 border-t border-slate-100 gap-4">
+                <p class="text-xs text-slate-400 font-medium text-center md:text-left">Pastikan jawaban Anda sudah benar sebelum lanjut.</p>
+                <div class="w-full md:w-auto">
+                    <button id="btnNext" onclick="nextQuestion()" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-10 rounded-xl transition shadow-lg hidden">
+                        Selanjutnya
+                    </button>
+                    <button id="btnSubmit" onclick="submitQuiz()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-10 rounded-xl transition shadow-lg shadow-green-500/30 hidden">
+                        Selesaikan Ujian
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultSection" class="hidden py-8">
+            <div class="text-center mb-10 border-b border-slate-100 pb-10">
+                <div class="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-3">Ujian Selesai!</h2>
+                <p id="resultDesc" class="text-slate-500 font-medium mb-8 text-lg">Jawaban Anda telah berhasil direkam.</p>
+                <div class="inline-block bg-white border-2 border-slate-100 shadow-sm rounded-2xl px-12 py-6">
+                    <p class="text-sm text-slate-400 font-bold uppercase tracking-widest mb-2">Skor Akhir Anda</p>
+                    <p id="finalScoreDisplay" class="text-6xl font-black text-blue-600 tracking-tighter"></p>
+                </div>
+            </div>
+
+            <div id="reviewWrapper" class="hidden">
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                    <div class="w-8 h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    Review Jawaban Salah
+                </h3>
+                <div id="reviewContainer" class="space-y-4">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // MASUKKAN URL WEB APP GOOGLE SCRIPT KAMU DI SINI
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2l03w5tUt43-HnVzQk0nzrUORB-sDkyRDW61RegqxKFLTwiTz2BvxF-N8eYC_4vF0-g/exec";
+
+        // Database Mahasiswa
+        const students = {
+            "31": "Geri Maulana Saputra", "32": "Khairunnisa Pratiwi", "34": "Rayhan Agra Rivaldi",
+            "42": "Annisa Mahyana Billah", "36": "Siti Muzayyanah", "51": "Iqlima Nuroktavias",
+            "52": "Fikri Gumilang", "61": "Siti Aliya Habibah", "69": "M. Dwi Arianto",
+            "72": "Firza Widyadana", "74": "Azzam Rusyan Ilmu", "89": "Nisa Ainur",
+            "99": "El Hadzieq Maula Sayyidina"
+        };
+
+        // Database Soal
+        let quizData = [
+            { question: "Apa definisi kompensasi menurut Dr. Wirawan?", options: [ { id: "A", text: "Balas jasa yang diberikan secara periodik sebulan sekali." }, { id: "B", text: "Imbalan uang dan nonuang yang diterima tenaga kerja sebagai hasil hubungan ketenagakerjaan." }, { id: "C", text: "Upah kerja yang dibayar dalam waktu yang tetap berdasarkan KBBI." }, { id: "D", text: "Kompensasi tambahan yang bertujuan mengikat pegawai agar tetap bekerja." } ], answer: "B" },
+            { question: "Manakah yang termasuk dalam kategori upah dasar (basic pay)?", options: [ { id: "A", text: "Bonus dan komisi." }, { id: "B", text: "Tunjangan keluarga dan tunjangan jabatan." }, { id: "C", text: "Gaji (salary) dan upah (wage)." }, { id: "D", text: "Program asuransi dan jaminan hari tua." } ], answer: "C" },
+            { question: "Upah yang diberikan kepada pegawai karena kinerjanya melampaui standar yang telah ditetapkan organisasi disebut...", options: [ { id: "A", text: "Upah kinerja (merit pay)." }, { id: "B", text: "Upah insentif (incentive pay)." }, { id: "C", text: "Upah yang ditunda (differed pay)." }, { id: "D", text: "Upah ketika tidak bekerja." } ], answer: "B" },
+            { question: "Apa yang dimaksud dengan upah per potong (piece rate) dalam jenis upah insentif?", options: [ { id: "A", text: "Upah berdasarkan persentase dari kinerja." }, { id: "B", text: "Upah tambahan dari sebagian keuntungan perusahaan." }, { id: "C", text: "Upah berdasarkan setiap unit produk yang diproduksi atau dijual." }, { id: "D", text: "Upah ekstra karena bekerja pada giliran kerja yang tidak disukai." } ], answer: "C" },
+            { question: "Fasilitas seperti perumahan, uang transportasi, dan uang makan yang disediakan untuk kelancaran tugas pegawai dikategorikan sebagai...", options: [ { id: "A", text: "Protection program." }, { id: "B", text: "Services and perquisites." }, { id: "C", text: "Upah ketika tidak bekerja." }, { id: "D", text: "Tunjangan tetap." } ], answer: "B" },
+            { question: "Tunjangan yang diberikan kepada PNS yang menduduki jabatan tertentu seperti guru, dosen, hakim, dan jaksa adalah...", options: [ { id: "A", text: "Tunjangan jabatan." }, { id: "B", text: "Tunjangan fungsional." }, { id: "C", text: "Tunjangan kemahalan." }, { id: "D", text: "Tunjangan sertifikasi." } ], answer: "B" },
+            { question: "Tunjangan Hari Raya (THR) bagi PNS yang dikenal sebagai \"gaji ke-14\" termasuk dalam jenis...", options: [ { id: "A", text: "Tunjangan tetap." }, { id: "B", text: "Tunjangan tidak tetap." }, { id: "C", text: "Tunjangan fungsional." }, { id: "D", text: "Tunjangan kinerja daerah." } ], answer: "B" },
+            { question: "Sistem penggajian yang merupakan perpaduan antara sistem skala tunggal dan skala ganda disebut...", options: [ { id: "A", text: "Sistem skala gabungan." }, { id: "B", text: "Sistem skala prestasi." }, { id: "C", text: "Sistem skala fungsional." }, { id: "D", text: "Sistem skala tunjangan." } ], answer: "A" },
+            { question: "Berdasarkan PP No. 78 Tahun 2015, berapa besaran minimal gaji pokok dari total gaji tetap?", options: [ { id: "A", text: "50%" }, { id: "B", text: "60%" }, { id: "C", text: "75%" }, { id: "D", text: "100%" } ], answer: "C" },
+            { question: "Apa batas maksimum total pemotongan upah yang dapat dilakukan perusahaan terhadap gaji pegawai?", options: [ { id: "A", text: "25%" }, { id: "B", text: "50%" }, { id: "C", text: "75%" }, { id: "D", text: "Tidak ada batas maksimum asalkan ada surat kuasa." } ], answer: "B" }
+        ];
+
+        let currentStudent = { nim: "", nama: "" };
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // FUNGSI UNTUK MENGACAK SOAL (SHUFFLE)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Deteksi input NIM
+        const nimInput = document.getElementById('nimInput');
+        nimInput.addEventListener('input', function() {
+            const btn = document.getElementById('btnMulai');
+            const errorBox = document.getElementById('errorBox');
+            errorBox.classList.add('hidden');
+            
+            if (this.value.trim().length > 0) {
+                btn.classList.remove('hidden');
+            } else {
+                btn.classList.add('hidden');
+            }
+        });
+
+        function showLoading(text) {
+            document.getElementById('loadingText').innerText = text;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        async function startQuiz() {
+            const nimValue = nimInput.value.trim();
+            const errorBox = document.getElementById('errorBox');
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (!students[nimValue]) {
+                errorMsg.innerText = "NIM tidak terdaftar. Silakan cek kembali.";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            showLoading("Memverifikasi data peserta...");
+            
+            try {
+                let response = await fetch(`${GOOGLE_SCRIPT_URL}?action=check&nim=${nimValue}`);
+                let result = await response.json();
+
+                if (result.exists) {
+                    hideLoading();
+                    errorMsg.innerText = "Anda telah melakukan tes evaluasi. Hubungi koordinator jika ini sebuah kesalahan.";
+                    errorBox.classList.remove('hidden');
+                    return;
+                }
+            } catch (error) {
+                console.warn("Gagal mengecek NIM ke server, melanjutkan tes...");
+            }
+
+            hideLoading();
+            currentStudent.nim = nimValue;
+            currentStudent.nama = students[nimValue];
+            
+            // ACAK SOAL DISINI SEBELUM TES DIMULAI
+            shuffleArray(quizData);
+            document.getElementById('totalQuestionsNum').innerText = quizData.length;
+            
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            document.getElementById('studentNameDisplay').innerText = currentStudent.nama;
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentQuestionIndex];
+            const qContainer = document.getElementById('questionContainer');
+            
+            // Update Progress
+            document.getElementById('currentQuestionNum').innerText = currentQuestionIndex + 1;
+            let progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+            
+            let html = `<p class="text-xl md:text-2xl text-slate-800 mb-6 font-semibold leading-relaxed">${currentQuestionIndex + 1}. ${q.question}</p>
+                        <div class="space-y-4">`;
+            
+            q.options.forEach(opt => {
+                html += `
+                    <label class="option-label block cursor-pointer transition-transform duration-200">
+                        <input type="radio" name="q${currentQuestionIndex}" value="${opt.id}" class="hidden" onchange="enableNextBtn()">
+                        <div class="flex items-center p-5 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all">
+                            <div class="radio-circle w-6 h-6 rounded-full border-2 border-slate-300 mr-5 transition-colors shrink-0"></div>
+                            <span class="text-slate-700 font-medium text-lg leading-snug"><span class="font-bold mr-2 text-slate-400">${opt.id}.</span> ${opt.text}</span>
+                        </div>
+                    </label>
+                `;
+            });
+            html += `</div>`;
+            qContainer.innerHTML = html;
+
+            document.getElementById('btnNext').classList.add('hidden');
+            document.getElementById('btnSubmit').classList.add('hidden');
+        }
+
+        function enableNextBtn() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                document.getElementById('btnNext').classList.remove('hidden');
+            } else {
+                document.getElementById('btnSubmit').classList.remove('hidden');
+            }
+        }
+
+        function getSelectedAnswer() {
+            const options = document.getElementsByName(`q${currentQuestionIndex}`);
+            for (let opt of options) {
+                if (opt.checked) return opt.value;
+            }
+            return null;
+        }
+
+        function nextQuestion() {
+            userAnswers[currentQuestionIndex] = getSelectedAnswer();
+            currentQuestionIndex++;
+            renderQuestion();
+        }
+
+        async function submitQuiz() {
+            userAnswers[currentQuestionIndex] = getSelectedAnswer();
+            
+            let jumlahBenar = 0;
+            userAnswers.forEach((ans, index) => {
+                if (ans === quizData[index].answer) jumlahBenar++;
+            });
+            let nilaiAkhir = Math.round((jumlahBenar / quizData.length) * 100);
+
+            showLoading("Menyimpan jawaban Anda...");
+
+            const payload = {
+                nim: currentStudent.nim,
+                nama: currentStudent.nama,
+                jumlahBenar: jumlahBenar,
+                nilai: nilaiAkhir
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                hideLoading();
+                showResult(nilaiAkhir, jumlahBenar);
+            } catch (error) {
+                hideLoading();
+                alert("Terjadi kesalahan jaringan saat mengirim data. Hubungi Koordinator.");
+            }
+        }
+
+        function showResult(skor, benar) {
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+            
+            document.getElementById('resultDesc').innerHTML = `Terima kasih, <b class="text-slate-700">${currentStudent.nama}</b>.<br>Anda berhasil menjawab benar ${benar} dari ${quizData.length} soal.`;
+            document.getElementById('finalScoreDisplay').innerText = skor;
+
+            let reviewHtml = "";
+            let adaSalah = false;
+
+            quizData.forEach((q, i) => {
+                if (userAnswers[i] !== q.answer) {
+                    adaSalah = true;
+                    let userAnsText = q.options.find(o => o.id === userAnswers[i])?.text || "Tidak dijawab";
+                    let correctAnsText = q.options.find(o => o.id === q.answer).text;
+
+                    reviewHtml += `
+                        <div class="bg-white p-6 border-2 border-red-100 rounded-2xl shadow-sm text-left">
+                            <p class="font-bold text-slate-800 mb-4 text-lg">${i + 1}. ${q.question}</p>
+                            <div class="bg-red-50 p-3 rounded-xl mb-2">
+                                <p class="text-sm text-slate-600 font-medium">Jawaban Anda:</p>
+                                <p class="text-red-600 font-semibold">${userAnswers[i]}. ${userAnsText}</p>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-xl">
+                                <p class="text-sm text-slate-600 font-medium">Jawaban Benar:</p>
+                                <p class="text-green-600 font-bold">${q.answer}. ${correctAnsText}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (adaSalah) {
+                document.getElementById('reviewContainer').innerHTML = reviewHtml;
+                document.getElementById('reviewWrapper').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
