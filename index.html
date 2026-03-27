@@ -14,6 +14,29 @@
                 }
             }
         }
+        // Mencegah klik kanan (Context Menu)
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // Mencegah shortcut keyboard untuk Inspect Element dan View Source
+    document.onkeydown = function(e) {
+        // Blokir tombol F12
+        if (e.key === "F12") {
+            e.preventDefault();
+            return false;
+        }
+        // Blokir Ctrl + Shift + I (Inspect) / J (Console) / C (Element)
+        if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C" || e.key === "i" || e.key === "j" || e.key === "c")) {
+            e.preventDefault();
+            return false;
+        }
+        // Blokir Ctrl + U (View Source)
+        if (e.ctrlKey && (e.key === "U" || e.key === "u")) {
+            e.preventDefault();
+            return false;
+        }
+    };
     </script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
