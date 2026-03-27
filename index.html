@@ -16,10 +16,8 @@
         }
     </script>
     <style>
-        /* Pastikan Poppins ter-apply sempurna */
         body { font-family: 'Poppins', sans-serif; }
         
-        /* Custom styling untuk radio button modern */
         .option-label input:checked + div {
             border-color: #3b82f6;
             background-color: #eff6ff;
@@ -34,95 +32,95 @@
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4 antialiased">
 
-    <div class="w-full max-w-3xl mb-8 text-center">
-        <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">Portal Ujian Evaluasi</h1>
-        <p class="text-slate-500 mt-2 font-medium">Sistem Ujian Kompetensi Materi Penggajian</p>
+    <div class="w-full max-w-3xl mb-6 md:mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Portal Ujian Evaluasi</h1>
+        <p class="text-sm md:text-base text-slate-500 mt-2 font-medium">Sistem Ujian Kompetensi Materi Penggajian</p>
     </div>
 
-    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 w-full max-w-3xl relative overflow-hidden">
+    <div class="bg-white p-6 md:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 w-full max-w-3xl relative overflow-hidden">
         
         <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
-            <svg class="animate-spin h-12 w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-10 w-10 md:h-12 md:w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p id="loadingText" class="text-slate-700 font-semibold text-lg">Memproses data...</p>
+            <p id="loadingText" class="text-slate-700 font-semibold text-base md:text-lg">Memproses data...</p>
         </div>
 
-        <div id="loginSection" class="text-center py-8">
-            <div class="w-24 h-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+        <div id="loginSection" class="text-center py-4 md:py-8">
+            <div class="w-20 h-20 md:w-24 md:h-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
             </div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-3">Verifikasi Peserta</h2>
-            <p class="text-slate-500 mb-10 font-medium">Silakan masukkan NIM akhir Anda untuk memulai tes.</p>
+            <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">Verifikasi Peserta</h2>
+            <p class="text-sm md:text-base text-slate-500 mb-8 md:mb-10 font-medium">Silakan masukkan NIM akhir Anda untuk memulai tes.</p>
             
             <div class="max-w-xs mx-auto text-left">
-                <label for="nimInput" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">NIM Akhir</label>
-                <input type="text" id="nimInput" class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 focus:outline-none transition-colors mb-5 text-center font-bold text-xl" placeholder="Contoh: 31" autocomplete="off">
-                <button id="btnMulai" onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 hidden">
+                <label for="nimInput" class="block text-xs md:text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">NIM Akhir</label>
+                <input type="text" id="nimInput" class="w-full px-4 py-3 md:px-5 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 focus:outline-none transition-colors mb-5 text-center font-bold text-lg md:text-xl" placeholder="Contoh: 31" autocomplete="off">
+                <button id="btnMulai" onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 md:py-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 hidden text-sm md:text-base">
                     Mulai Ujian Sekarang
                 </button>
-                <div id="errorBox" class="bg-red-50 text-red-600 border border-red-200 text-sm p-4 rounded-xl mt-5 hidden">
+                <div id="errorBox" class="bg-red-50 text-red-600 border border-red-200 text-xs md:text-sm p-3 md:p-4 rounded-xl mt-5 hidden">
                     <p id="errorMsg" class="font-semibold text-center"></p>
                 </div>
             </div>
         </div>
 
         <div id="quizSection" class="hidden">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b border-slate-100 pb-5 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-5 md:mb-6 border-b border-slate-100 pb-4 md:pb-5 gap-3 md:gap-4">
                 <div>
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Peserta Ujian</p>
-                    <p id="studentNameDisplay" class="font-bold text-slate-800 text-xl"></p>
+                    <p class="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Peserta Ujian</p>
+                    <p id="studentNameDisplay" class="font-bold text-slate-800 text-lg md:text-xl"></p>
                 </div>
                 <div class="w-full md:w-auto text-left md:text-right">
-                    <div class="inline-flex items-center bg-blue-50 text-blue-700 text-sm font-bold px-4 py-2 rounded-xl border border-blue-100">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="inline-flex items-center bg-blue-50 text-blue-700 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-blue-100">
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Soal <span id="currentQuestionNum" class="mx-1">1</span> dari <span id="totalQuestionsNum" class="ml-1">10</span>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full bg-slate-100 rounded-full h-2.5 mb-8 overflow-hidden">
-                <div id="progressBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 10%"></div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mb-6 md:mb-8 overflow-hidden">
+                <div id="progressBar" class="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out" style="width: 10%"></div>
             </div>
 
-            <div id="questionContainer" class="mb-8 min-h-[300px]">
+            <div id="questionContainer" class="mb-6 md:mb-8 min-h-[250px] md:min-h-[300px]">
                 </div>
 
-            <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-8 pt-6 border-t border-slate-100 gap-4">
-                <p class="text-xs text-slate-400 font-medium text-center md:text-left">Pastikan jawaban Anda sudah benar sebelum lanjut.</p>
+            <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-6 md:mt-8 pt-5 md:pt-6 border-t border-slate-100 gap-4">
+                <p class="text-[10px] md:text-xs text-slate-400 font-medium text-center md:text-left">Pastikan jawaban Anda sudah benar sebelum lanjut.</p>
                 <div class="w-full md:w-auto">
-                    <button id="btnNext" onclick="nextQuestion()" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-10 rounded-xl transition shadow-lg hidden">
+                    <button id="btnNext" onclick="nextQuestion()" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg hidden text-sm md:text-base">
                         Selanjutnya
                     </button>
-                    <button id="btnSubmit" onclick="submitQuiz()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-10 rounded-xl transition shadow-lg shadow-green-500/30 hidden">
+                    <button id="btnSubmit" onclick="submitQuiz()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg shadow-green-500/30 hidden text-sm md:text-base">
                         Selesaikan Ujian
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="resultSection" class="hidden py-8">
-            <div class="text-center mb-10 border-b border-slate-100 pb-10">
-                <div class="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+        <div id="resultSection" class="hidden py-4 md:py-8">
+            <div class="text-center mb-8 md:mb-10 border-b border-slate-100 pb-8 md:pb-10">
+                <div class="w-20 h-20 md:w-24 md:h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-5 md:mb-6">
+                    <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </div>
-                <h2 class="text-4xl font-extrabold text-slate-800 mb-3">Ujian Selesai!</h2>
-                <p id="resultDesc" class="text-slate-500 font-medium mb-8 text-lg">Jawaban Anda telah berhasil direkam.</p>
-                <div class="inline-block bg-white border-2 border-slate-100 shadow-sm rounded-2xl px-12 py-6">
-                    <p class="text-sm text-slate-400 font-bold uppercase tracking-widest mb-2">Skor Akhir Anda</p>
-                    <p id="finalScoreDisplay" class="text-6xl font-black text-blue-600 tracking-tighter"></p>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-2 md:mb-3">Ujian Selesai!</h2>
+                <p id="resultDesc" class="text-slate-500 font-medium mb-6 md:mb-8 text-base md:text-lg">Jawaban Anda telah berhasil direkam.</p>
+                <div class="inline-block bg-white border-2 border-slate-100 shadow-sm rounded-2xl px-10 py-5 md:px-12 md:py-6">
+                    <p class="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest mb-1 md:mb-2">Skor Akhir Anda</p>
+                    <p id="finalScoreDisplay" class="text-5xl md:text-6xl font-black text-blue-600 tracking-tighter"></p>
                 </div>
             </div>
 
             <div id="reviewWrapper" class="hidden">
-                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                    <div class="w-8 h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <h3 class="text-lg md:text-xl font-bold text-slate-800 mb-4 md:mb-6 flex items-center">
+                    <div class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center mr-2 md:mr-3">
+                        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
                     Review Jawaban Salah
                 </h3>
-                <div id="reviewContainer" class="space-y-4">
+                <div id="reviewContainer" class="space-y-3 md:space-y-4">
                     </div>
             </div>
         </div>
@@ -190,7 +188,7 @@
             document.getElementById('loadingOverlay').classList.add('hidden');
         }
 
-        async function startQuiz() {
+        function startQuiz() {
             const nimValue = nimInput.value.trim();
             const errorBox = document.getElementById('errorBox');
             const errorMsg = document.getElementById('errorMsg');
@@ -201,27 +199,10 @@
                 return;
             }
 
-            showLoading("Memverifikasi data peserta...");
-            
-            try {
-                let response = await fetch(`${GOOGLE_SCRIPT_URL}?action=check&nim=${nimValue}`);
-                let result = await response.json();
-
-                if (result.exists) {
-                    hideLoading();
-                    errorMsg.innerText = "Anda telah melakukan tes evaluasi. Hubungi koordinator jika ini sebuah kesalahan.";
-                    errorBox.classList.remove('hidden');
-                    return;
-                }
-            } catch (error) {
-                console.warn("Gagal mengecek NIM ke server, melanjutkan tes...");
-            }
-
-            hideLoading();
+            // Pengecekan server dihapus agar instan
             currentStudent.nim = nimValue;
             currentStudent.nama = students[nimValue];
             
-            // ACAK SOAL DISINI SEBELUM TES DIMULAI
             shuffleArray(quizData);
             document.getElementById('totalQuestionsNum').innerText = quizData.length;
             
@@ -236,21 +217,20 @@
             const q = quizData[currentQuestionIndex];
             const qContainer = document.getElementById('questionContainer');
             
-            // Update Progress
             document.getElementById('currentQuestionNum').innerText = currentQuestionIndex + 1;
             let progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
             document.getElementById('progressBar').style.width = `${progressPercent}%`;
             
-            let html = `<p class="text-xl md:text-2xl text-slate-800 mb-6 font-semibold leading-relaxed">${currentQuestionIndex + 1}. ${q.question}</p>
-                        <div class="space-y-4">`;
+            let html = `<p class="text-lg md:text-2xl text-slate-800 mb-5 md:mb-6 font-semibold leading-relaxed">${currentQuestionIndex + 1}. ${q.question}</p>
+                        <div class="space-y-3 md:space-y-4">`;
             
             q.options.forEach(opt => {
                 html += `
                     <label class="option-label block cursor-pointer transition-transform duration-200">
                         <input type="radio" name="q${currentQuestionIndex}" value="${opt.id}" class="hidden" onchange="enableNextBtn()">
-                        <div class="flex items-center p-5 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all">
-                            <div class="radio-circle w-6 h-6 rounded-full border-2 border-slate-300 mr-5 transition-colors shrink-0"></div>
-                            <span class="text-slate-700 font-medium text-lg leading-snug"><span class="font-bold mr-2 text-slate-400">${opt.id}.</span> ${opt.text}</span>
+                        <div class="flex items-center p-4 md:p-5 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all">
+                            <div class="radio-circle w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-slate-300 mr-3 md:mr-5 transition-colors shrink-0"></div>
+                            <span class="text-slate-700 font-medium text-base md:text-lg leading-snug"><span class="font-bold mr-2 text-slate-400">${opt.id}.</span> ${opt.text}</span>
                         </div>
                     </label>
                 `;
@@ -284,7 +264,7 @@
             renderQuestion();
         }
 
-        async function submitQuiz() {
+        function submitQuiz() {
             userAnswers[currentQuestionIndex] = getSelectedAnswer();
             
             let jumlahBenar = 0;
@@ -293,7 +273,7 @@
             });
             let nilaiAkhir = Math.round((jumlahBenar / quizData.length) * 100);
 
-            showLoading("Menyimpan jawaban Anda...");
+            showLoading("Menyiapkan hasil Anda...");
 
             const payload = {
                 nim: currentStudent.nim,
@@ -302,20 +282,19 @@
                 nilai: nilaiAkhir
             };
 
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
+            // Kirim data di background tanpa ditunggu
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(e => console.log(e));
+            
+            // Set timeout sebentar (0.8 detik) agar ada efek transisi memproses, lalu langsung muncul hasil
+            setTimeout(() => {
                 hideLoading();
                 showResult(nilaiAkhir, jumlahBenar);
-            } catch (error) {
-                hideLoading();
-                alert("Terjadi kesalahan jaringan saat mengirim data. Hubungi Koordinator.");
-            }
+            }, 800);
         }
 
         function showResult(skor, benar) {
@@ -335,15 +314,15 @@
                     let correctAnsText = q.options.find(o => o.id === q.answer).text;
 
                     reviewHtml += `
-                        <div class="bg-white p-6 border-2 border-red-100 rounded-2xl shadow-sm text-left">
-                            <p class="font-bold text-slate-800 mb-4 text-lg">${i + 1}. ${q.question}</p>
+                        <div class="bg-white p-5 md:p-6 border-2 border-red-100 rounded-2xl shadow-sm text-left">
+                            <p class="font-bold text-slate-800 mb-3 md:mb-4 text-base md:text-lg">${i + 1}. ${q.question}</p>
                             <div class="bg-red-50 p-3 rounded-xl mb-2">
-                                <p class="text-sm text-slate-600 font-medium">Jawaban Anda:</p>
-                                <p class="text-red-600 font-semibold">${userAnswers[i]}. ${userAnsText}</p>
+                                <p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Anda:</p>
+                                <p class="text-red-600 font-semibold text-sm md:text-base">${userAnswers[i]}. ${userAnsText}</p>
                             </div>
                             <div class="bg-green-50 p-3 rounded-xl">
-                                <p class="text-sm text-slate-600 font-medium">Jawaban Benar:</p>
-                                <p class="text-green-600 font-bold">${q.answer}. ${correctAnsText}</p>
+                                <p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Benar:</p>
+                                <p class="text-green-600 font-bold text-sm md:text-base">${q.answer}. ${correctAnsText}</p>
                             </div>
                         </div>
                     `;
