@@ -14,29 +14,6 @@
                 }
             }
         }
-        // Mencegah klik kanan (Context Menu)
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
-
-    // Mencegah shortcut keyboard untuk Inspect Element dan View Source
-    document.onkeydown = function(e) {
-        // Blokir tombol F12
-        if (e.key === "F12") {
-            e.preventDefault();
-            return false;
-        }
-        // Blokir Ctrl + Shift + I (Inspect) / J (Console) / C (Element)
-        if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C" || e.key === "i" || e.key === "j" || e.key === "c")) {
-            e.preventDefault();
-            return false;
-        }
-        // Blokir Ctrl + U (View Source)
-        if (e.ctrlKey && (e.key === "U" || e.key === "u")) {
-            e.preventDefault();
-            return false;
-        }
-    };
     </script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
@@ -80,7 +57,7 @@
             <div class="max-w-xs mx-auto text-left">
                 <label for="nimInput" class="block text-xs md:text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">NIM Akhir</label>
                 <input type="text" id="nimInput" class="w-full px-4 py-3 md:px-5 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 focus:outline-none transition-colors mb-4 md:mb-5 text-center font-bold text-base md:text-xl" placeholder="Contoh: 31" autocomplete="off">
-                <button id="btnMulai" onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 md:py-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 hidden text-sm md:text-base">
+                <button id="btnMulai" onclick="_0xGlobalStart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 md:py-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 hidden text-sm md:text-base">
                     Mulai Ujian Sekarang
                 </button>
                 <div id="errorBox" class="bg-red-50 text-red-600 border border-red-200 text-xs md:text-sm p-3 md:p-4 rounded-xl mt-4 md:mt-5 hidden">
@@ -113,10 +90,10 @@
             <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-5 md:mt-8 pt-4 md:pt-6 border-t border-slate-100 gap-3 md:gap-4">
                 <p class="text-[10px] md:text-xs text-slate-400 font-medium text-center md:text-left">Pastikan jawaban yang diisi sudah benar sebelum lanjut.</p>
                 <div class="w-full md:w-auto">
-                    <button id="btnNext" onclick="nextQuestion()" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg hidden text-sm md:text-base">
+                    <button id="btnNext" onclick="_0xGlobalNext()" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg hidden text-sm md:text-base">
                         Selanjutnya
                     </button>
-                    <button id="btnSubmit" onclick="submitQuiz()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg shadow-green-500/30 hidden text-sm md:text-base">
+                    <button id="btnSubmit" onclick="_0xGlobalSubmit()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg shadow-green-500/30 hidden text-sm md:text-base">
                         Selesaikan Ujian
                     </button>
                 </div>
@@ -144,235 +121,171 @@
                     Review Jawaban Salah
                 </h3>
                 <div id="reviewContainer" class="space-y-3 md:space-y-4">
-                    </div>
+                </div>
             </div>
         </div>
 
     </div>
 
-        <script>
-        // MASUKKAN URL WEB APP GOOGLE SCRIPT KAMU DI SINI
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2l03w5tUt43-HnVzQk0nzrUORB-sDkyRDW61RegqxKFLTwiTz2BvxF-N8eYC_4vF0-g/exec";
-
-        // Database Mahasiswa
-        const students = {
-            "31": "Geri Maulana Saputra", "32": "Khairunnisa Pratiwi", "34": "Rayhan Agra Rivaldi",
-            "42": "Annisa Mahyana Billah", "36": "Siti Muzayyanah", "51": "Iqlima Nuroktavias",
-            "52": "Fikri Gumilang", "61": "Siti Aliya Habibah", "69": "Ari Brebes",
-            "72": "Firza Widyadana", "74": "Azzam Rusyan Ilmu", "89": "Nisa Ainur",
-            "99": "El Hadzieq Maula Sayyidina"
-        };
-
-        // Database Soal
-       let quizData = [
-        { question: "\x41\x70\x61\x20\x64\x65\x66\x69\x6e\x69\x73\x69\x20\x6b\x6f\x6d\x70\x65\x6e\x73\x61\x73\x69\x20\x6d\x65\x6e\x75\x72\x75\x74\x20\x44\x72\x2e\x20\x57\x69\x72\x61\x77\x61\x6e\x3f", options: [ { id: "A", text: "Balas jasa yang diberikan secara periodik sebulan sekali." }, { id: "B", text: "Imbalan uang dan nonuang yang diterima tenaga kerja sebagai hasil hubungan ketenagakerjaan." }, { id: "C", text: "Upah kerja yang dibayar dalam waktu yang tetap berdasarkan KBBI." }, { id: "D", text: "Kompensasi tambahan yang bertujuan mengikat pegawai agar tetap bekerja." } ], answer: "B" },
-        { question: "\x4d\x61\x6e\x61\x6b\x61\x68\x20\x7a\x61\x6e\x67\x20\x74\x65\x72\x6d\x61\x73\x75\x6b\x20\x64\x61\x6c\x61\x6d\x20\x6b\x61\x74\x65\x67\x6f\x72\x69\x20\x75\x70\x61\x68\x20\x64\x61\x73\x61\x72\x20\x28\x62\x61\x73\x69\x63\x20\x70\x61\x79\x29\x3f", options: [ { id: "A", text: "Bonus dan komisi." }, { id: "B", text: "Tunjangan keluarga dan tunjangan jabatan." }, { id: "C", text: "Gaji (salary) dan upah (wage)." }, { id: "D", text: "Program asuransi dan jaminan hari tua." } ], answer: "C" },
-        { question: "\x55\x70\x61\x68\x20\x7a\x61\x6e\x67\x20\x64\x69\x62\x65\x72\x69\x6b\x61\x6e\x20\x6b\x65\x70\x61\x64\x61\x20\x70\x65\x67\x61\x77\x61\x69\x20\x6b\x61\x72\x65\x6e\x61\x20\x6b\x69\x6e\x65\x72\x6a\x61\x6e\x7a\x61\x20\x6d\x65\x6c\x61\x6d\x70\x61\x75\x69\x20\x73\x74\x61\x6e\x64\x61\x72\x20\x7a\x61\x6e\x67\x20\x74\x65\x6c\x61\x68\x20\x64\x69\x74\x65\x74\x61\x70\x6b\x61\x6e\x20\x6f\x72\x67\x61\x6e\x69\x73\x61\x73\x69\x20\x64\x69\x73\x65\x62\x75\x74\x2e\x2e\x2e", options: [ { id: "A", text: "Upah kinerja (merit pay)." }, { id: "B", text: "Upah insentif (incentive pay)." }, { id: "C", text: "Upah yang ditunda (differed pay)." }, { id: "D", text: "Upah ketika tidak bekerja." } ], answer: "B" },
-        { question: "\x41\x70\x61\x20\x7a\x61\x6e\x67\x20\x64\x69\x6d\x61\x6b\x73\x75\x64\x20\x64\x65\x6e\x67\x61\x6e\x20\x75\x70\x61\x68\x20\x70\x65\x72\x20\x70\x6f\x74\x6f\x6e\x67\x20\x28\x70\x69\x65\x63\x65\x20\x72\x61\x74\x65\x29\x20\x64\x61\x6c\x61\x6d\x20\x6a\x65\x6e\x69\x73\x20\x75\x70\x61\x68\x20\x69\x6e\x73\x65\x6e\x74\x69\x66\x3f", options: [ { id: "A", text: "Upah berdasarkan persentase dari kinerja." }, { id: "B", text: "Upah tambahan dari sebagian keuntungan perusahaan." }, { id: "C", text: "Upah berdasarkan setiap unit produk yang diproduksi atau dijual." }, { id: "D", text: "Upah ekstra karena bekerja pada giliran kerja yang tidak disukai." } ], answer: "C" },
-        { question: "\x46\x61\x73\x69\x6c\x69\x74\x61\x73\x20\x73\x65\x70\x65\x72\x74\x69\x20\x70\x65\x72\x75\x6d\x61\x68\x61\x6e\x2c\x20\x75\x61\x6e\x67\x20\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\x61\x73\x69\x2c\x20\x64\x61\x6e\x20\x75\x61\x6e\x67\x20\x6d\x61\x6b\x61\x6e\x20\x7a\x61\x6e\x67\x20\x64\x69\x73\x65\x64\x69\x61\x6b\x61\x6e\x20\x75\x6e\x74\x75\x6b\x20\x6b\x65\x6c\x61\x6e\x63\x61\x72\x61\x6e\x20\x74\x75\x67\x61\x73\x20\x70\x65\x67\x61\x77\x61\x69\x20\x64\x69\x6b\x61\x74\x65\x67\x6f\x72\x69\x6b\x61\x6e\x20\x73\x65\x62\x61\x67\x61\x69\x2e\x2e\x2e", options: [ { id: "A", text: "Protection program." }, { id: "B", text: "Services and perquisites." }, { id: "C", text: "Upah ketika tidak bekerja." }, { id: "D", text: "Tunjangan tetap." } ], answer: "B" },
-        { question: "\x54\x75\x6e\x6a\x61\x6e\x67\x61\x6e\x20\x7a\x61\x6e\x67\x20\x64\x69\x62\x65\x72\x69\x6b\x61\x6e\x20\x6b\x65\x70\x61\x64\x61\x20\x50\x4e\x53\x20\x7a\x61\x6e\x67\x20\x6d\x65\x6e\x64\x75\x64\x75\x6b\x69\x20\x6a\x61\x62\x61\x74\x61\x6e\x20\x74\x65\x72\x74\x65\x6e\x74\x75\x20\x73\x65\x70\x65\x72\x74\x69\x20\x67\x75\x72\x75\x2c\x20\x64\x6f\x73\x65\x6e\x2c\x20\x68\x61\x6b\x69\x6d\x2c\x20\x64\x61\x6e\x20\x6a\x61\x6b\x73\x61\x20\x61\x64\x61\x6c\x61\x68\x2e\x2e\x2e", options: [ { id: "A", text: "Tunjangan jabatan." }, { id: "B", text: "Tunjangan fungsional." }, { id: "C", text: "Tunjangan kemahalan." }, { id: "D", text: "Tunjangan sertifikasi." } ], answer: "B" },
-        { question: "\x54\x75\x6e\x6a\x61\x6e\x67\x61\x6e\x20\x48\x61\x72\x69\x20\x52\x61\x7a\x61\x20\x28\x54\x48\x52\x29\x20\x62\x61\x67\x69\x20\x50\x4e\x53\x20\x7a\x61\x6e\x67\x20\x64\x69\x6b\x65\x6e\x61\x6c\x20\x73\x65\x62\x61\x67\x61\x69\x20\x22\x67\x61\x6a\x69\x20\x6b\x65\x2d\x31\x34\x22\x20\x74\x65\x72\x6d\x61\x73\x75\x6b\x20\x64\x61\x6c\x61\x6d\x20\x6a\x65\x6e\x69\x73\x2e\x2e\x2e", options: [ { id: "A", text: "Tunjangan tetap." }, { id: "B", text: "Tunjangan tidak tetap." }, { id: "C", text: "Tunjangan fungsional." }, { id: "D", text: "Tunjangan kinerja daerah." } ], answer: "B" },
-        { question: "\x53\x69\x73\x74\x65\x6d\x20\x70\x65\x6e\x67\x67\x61\x6a\x69\x61\x6e\x20\x7a\x61\x6e\x67\x20\x6d\x65\x72\x75\x70\x61\x6b\x61\x6e\x20\x70\x65\x72\x70\x61\x64\x75\x61\x6e\x20\x61\x6e\x74\x61\x72\x61\x20\x73\x69\x73\x74\x65\x6d\x20\x73\x6b\x61\x6c\x61\x20\x74\x75\x6e\x67\x67\x61\x6c\x20\x64\x61\x6e\x20\x73\x6b\x61\x6c\x61\x20\x67\x61\x6e\x64\x61\x20\x64\x69\x73\x65\x62\x75\x74\x2e\x2e\x2e", options: [ { id: "A", text: "Sistem skala gabungan." }, { id: "B", text: "Sistem skala prestasi." }, { id: "C", text: "Sistem skala fungsional." }, { id: "D", text: "Sistem skala tunjangan." } ], answer: "A" },
-        { question: "\x42\x65\x72\x64\x61\x73\x61\x72\x6b\x61\x6e\x20\x50\x50\x20\x4e\x6f\x2e\x20\x37\x38\x20\x54\x61\x68\x75\x6e\x20\x32\x30\x31\x35\x2c\x20\x62\x65\x72\x61\x70\x61\x20\x62\x65\x73\x61\x72\x61\x6e\x20\x6d\x69\x6e\x69\x6d\x61\x6c\x20\x67\x61\x6a\x69\x20\x70\x6f\x6b\x6f\x6b\x20\x64\x61\x72\x69\x20\x74\x6f\x74\x61\x64\x20\x67\x61\x6a\x69\x20\x74\x65\x74\x61\x70\x3f", options: [ { id: "A", text: "50%" }, { id: "B", text: "60%" }, { id: "C", text: "75%" }, { id: "D", text: "100%" } ], answer: "C" },
-        { question: "\x41\x70\x61\x20\x62\x61\x74\x61\x73\x20\x6d\x61\x6b\x73\x69\x6d\x75\x6d\x20\x74\x6f\x74\x61\x6c\x20\x70\x65\x6d\x6f\x74\x6f\x6e\x67\x61\x6e\x20\x75\x70\x61\x68\x20\x7a\x61\x6e\x67\x20\x64\x61\x70\x61\x74\x20\x64\x69\x6c\x61\x6b\x75\x6b\x61\x6e\x20\x70\x65\x72\x75\x73\x61\x68\x61\x61\x6e\x20\x74\x65\x72\x68\x61\x64\x61\x70\x20\x67\x61\x6a\x69\x20\x70\x65\x67\x61\x77\x61\x69\x3f", options: [ { id: "A", text: "25%" }, { id: "B", text: "50%" }, { id: "C", text: "75%" }, { id: "D", text: "Tidak ada batas maksimum asalkan ada surat kuasa." } ], answer: "B" }
-    ];
-
-        let currentStudent = { nim: "", nama: "" };
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        const nimInput = document.getElementById('nimInput');
-        nimInput.addEventListener('input', function() {
-            const btn = document.getElementById('btnMulai');
-            const errorBox = document.getElementById('errorBox');
-            errorBox.classList.add('hidden');
+    <script>
+        (function() {
+            // == 1. DATA & KONFIGURASI ==
+            const _0xUrl = "https://script.google.com/macros/s/AKfycby2l03w5tUt43-HnVzQk0nzrUORB-sDkyRDW61RegqxKFLTwiTz2BvxF-N8eYC_4vF0-g/exec";
+            const _0xStd = { "31": "Geri Maulana Saputra", "32": "Khairunnisa Pratiwi", "34": "Rayhan Agra Rivaldi", "42": "Annisa Mahyana Billah", "36": "Siti Muzayyanah", "51": "Iqlima Nuroktavias", "52": "Fikri Gumilang", "61": "Siti Aliya Habibah", "69": "Ari Brebes", "72": "Firza Widyadana", "74": "Azzam Rusyan Ilmu", "89": "Nisa Ainur", "99": "El Hadzieq Maula Sayyidina" };
             
-            if (this.value.trim().length > 0) {
-                btn.classList.remove('hidden');
-            } else {
-                btn.classList.add('hidden');
-            }
-        });
+            // Soal dijaga dalam teks murni agar 100% bebas dari typo
+            let _0xQd = [
+                { q: "Apa definisi kompensasi menurut Dr. Wirawan?", o: [ { i: "A", t: "Balas jasa yang diberikan secara periodik sebulan sekali." }, { i: "B", t: "Imbalan uang dan nonuang yang diterima tenaga kerja sebagai hasil hubungan ketenagakerjaan." }, { i: "C", t: "Upah kerja yang dibayar dalam waktu yang tetap berdasarkan KBBI." }, { i: "D", t: "Kompensasi tambahan yang bertujuan mengikat pegawai agar tetap bekerja." } ], a: String.fromCharCode(66) },
+                { q: "Manakah yang termasuk dalam kategori upah dasar (basic pay)?", o: [ { i: "A", t: "Bonus dan komisi." }, { i: "B", t: "Tunjangan keluarga dan tunjangan jabatan." }, { i: "C", t: "Gaji (salary) dan upah (wage)." }, { i: "D", t: "Program asuransi dan jaminan hari tua." } ], a: String.fromCharCode(67) },
+                { q: "Upah yang diberikan kepada pegawai karena kinerjanya melampaui standar yang telah ditetapkan organisasi disebut...", o: [ { i: "A", t: "Upah kinerja (merit pay)." }, { i: "B", t: "Upah insentif (incentive pay)." }, { i: "C", t: "Upah yang ditunda (differed pay)." }, { i: "D", t: "Upah ketika tidak bekerja." } ], a: String.fromCharCode(66) },
+                { q: "Apa yang dimaksud dengan upah per potong (piece rate) dalam jenis upah insentif?", o: [ { i: "A", t: "Upah berdasarkan persentase dari kinerja." }, { i: "B", t: "Upah tambahan dari sebagian keuntungan perusahaan." }, { i: "C", t: "Upah berdasarkan setiap unit produk yang diproduksi atau dijual." }, { i: "D", t: "Upah ekstra karena bekerja pada giliran kerja yang tidak disukai." } ], a: String.fromCharCode(67) },
+                { q: "Fasilitas seperti perumahan, uang transportasi, dan uang makan yang disediakan untuk kelancaran tugas pegawai dikategorikan sebagai...", o: [ { i: "A", t: "Protection program." }, { i: "B", t: "Services and perquisites." }, { i: "C", t: "Upah ketika tidak bekerja." }, { i: "D", t: "Tunjangan tetap." } ], a: String.fromCharCode(66) },
+                { q: "Tunjangan yang diberikan kepada PNS yang menduduki jabatan tertentu seperti guru, dosen, hakim, dan jaksa adalah...", o: [ { i: "A", t: "Tunjangan jabatan." }, { i: "B", t: "Tunjangan fungsional." }, { i: "C", t: "Tunjangan kemahalan." }, { i: "D", t: "Tunjangan sertifikasi." } ], a: String.fromCharCode(66) },
+                { q: "Tunjangan Hari Raya (THR) bagi PNS yang dikenal sebagai \"gaji ke-14\" termasuk dalam jenis...", o: [ { i: "A", t: "Tunjangan tetap." }, { i: "B", t: "Tunjangan tidak tetap." }, { i: "C", t: "Tunjangan fungsional." }, { i: "D", t: "Tunjangan kinerja daerah." } ], a: String.fromCharCode(66) },
+                { q: "Sistem penggajian yang merupakan perpaduan antara sistem skala tunggal dan skala ganda disebut...", o: [ { i: "A", t: "Sistem skala gabungan." }, { i: "B", t: "Sistem skala prestasi." }, { i: "C", t: "Sistem skala fungsional." }, { i: "D", t: "Sistem skala tunjangan." } ], a: String.fromCharCode(65) },
+                { q: "Berdasarkan PP No. 78 Tahun 2015, berapa besaran minimal gaji pokok dari total gaji tetap?", o: [ { i: "A", t: "50%" }, { i: "B", t: "60%" }, { i: "C", t: "75%" }, { i: "D", t: "100%" } ], a: String.fromCharCode(67) },
+                { q: "Apa batas maksimum total pemotongan upah yang dapat dilakukan perusahaan terhadap gaji pegawai?", o: [ { i: "A", t: "25%" }, { i: "B", t: "50%" }, { i: "C", t: "75%" }, { i: "D", t: "Tidak ada batas maksimum asalkan ada surat kuasa." } ], a: String.fromCharCode(66) }
+            ];
 
-        function showLoading(text) {
-            document.getElementById('loadingText').innerText = text;
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
+            let _0xCur = { n: "", m: "" };
+            let _0xIdx = 0;
+            let _0xAns = [];
+            let _0xDone = false; // Flag status ujian
 
-        async function startQuiz() {
-            const nimValue = nimInput.value.trim();
-            const errorBox = document.getElementById('errorBox');
-            const errorMsg = document.getElementById('errorMsg');
-
-            if (!students[nimValue]) {
-                errorMsg.innerText = "NIM tidak terdaftar. Silakan cek kembali.";
-                errorBox.classList.remove('hidden');
-                return;
-            }
-
-            showLoading("Memverifikasi data peserta...");
+            // == 2. PROTEKSI & ANTI-CHEAT ==
             
-            try {
-                let response = await fetch(`${GOOGLE_SCRIPT_URL}?action=check&nim=${nimValue}`);
-                let result = await response.json();
-
-                if (result.exists) {
-                    hideLoading();
-                    errorMsg.innerText = "Anda telah melakukan tes evaluasi. Hubungi koordinator jika ini sebuah kesalahan.";
-                    errorBox.classList.remove('hidden');
-                    return;
+            // A. Cegah Klik Kanan
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            
+            // B. Cegah F12 & Inspect Element Shortcuts
+            document.onkeydown = function(e) {
+                if(e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C" || e.key === "i" || e.key === "j" || e.key === "c")) || (e.ctrlKey && (e.key === "U" || e.key === "u"))) {
+                    e.preventDefault(); return false;
                 }
-            } catch (error) {
-                console.warn("Gagal mengecek NIM ke server, melanjutkan tes...");
-            }
-
-            hideLoading();
-            currentStudent.nim = nimValue;
-            currentStudent.nama = students[nimValue];
-            
-            shuffleArray(quizData);
-            document.getElementById('totalQuestionsNum').innerText = quizData.length;
-            
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('quizSection').classList.remove('hidden');
-            document.getElementById('studentNameDisplay').innerText = currentStudent.nama;
-            
-            renderQuestion();
-        }
-
-        function renderQuestion() {
-            const q = quizData[currentQuestionIndex];
-            const qContainer = document.getElementById('questionContainer');
-            
-            document.getElementById('currentQuestionNum').innerText = currentQuestionIndex + 1;
-            let progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
-            document.getElementById('progressBar').style.width = `${progressPercent}%`;
-            
-            // FONT SIZE DIKECILKAN UNTUK HP (text-base), TETAP BESAR DI DESKTOP (md:text-2xl)
-            let html = `<p class="text-base md:text-2xl text-slate-800 mb-4 md:mb-6 font-semibold leading-relaxed">${currentQuestionIndex + 1}. ${q.question}</p>
-                        <div class="space-y-3 md:space-y-4">`;
-            
-            q.options.forEach(opt => {
-                html += `
-                    <label class="option-label block cursor-pointer transition-transform duration-200">
-                        <input type="radio" name="q${currentQuestionIndex}" value="${opt.id}" class="hidden" onchange="enableNextBtn()">
-                        <div class="flex items-center p-3 md:p-5 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all">
-                            <div class="radio-circle w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-slate-300 mr-3 md:mr-5 transition-colors shrink-0"></div>
-                            <span class="text-slate-700 font-medium text-sm md:text-lg leading-snug"><span class="font-bold mr-2 text-slate-400">${opt.id}.</span> ${opt.text}</span>
-                        </div>
-                    </label>
-                `;
-            });
-            html += `</div>`;
-            qContainer.innerHTML = html;
-
-            document.getElementById('btnNext').classList.add('hidden');
-            document.getElementById('btnSubmit').classList.add('hidden');
-        }
-
-        function enableNextBtn() {
-            if (currentQuestionIndex < quizData.length - 1) {
-                document.getElementById('btnNext').classList.remove('hidden');
-            } else {
-                document.getElementById('btnSubmit').classList.remove('hidden');
-            }
-        }
-
-        function getSelectedAnswer() {
-            const options = document.getElementsByName(`q${currentQuestionIndex}`);
-            for (let opt of options) {
-                if (opt.checked) return opt.value;
-            }
-            return null;
-        }
-
-        function nextQuestion() {
-            userAnswers[currentQuestionIndex] = getSelectedAnswer();
-            currentQuestionIndex++;
-            renderQuestion();
-        }
-
-        async function submitQuiz() {
-            userAnswers[currentQuestionIndex] = getSelectedAnswer();
-            
-            let jumlahBenar = 0;
-            userAnswers.forEach((ans, index) => {
-                if (ans === quizData[index].answer) jumlahBenar++;
-            });
-            let nilaiAkhir = Math.round((jumlahBenar / quizData.length) * 100);
-
-            showLoading("Menyimpan jawaban Anda...");
-
-            const payload = {
-                nim: currentStudent.nim,
-                nama: currentStudent.nama,
-                jumlahBenar: jumlahBenar,
-                nilai: nilaiAkhir
             };
 
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                hideLoading();
-                showResult(nilaiAkhir, jumlahBenar);
-            } catch (error) {
-                hideLoading();
-                alert("Terjadi kesalahan jaringan saat mengirim data. Hubungi Koordinator.");
-            }
-        }
-
-        function showResult(skor, benar) {
-            document.getElementById('quizSection').classList.add('hidden');
-            document.getElementById('resultSection').classList.remove('hidden');
-            
-            document.getElementById('resultDesc').innerHTML = `Terima kasih, <b class="text-slate-700">${currentStudent.nama}</b>.<br>Anda berhasil menjawab benar ${benar} dari ${quizData.length} soal.`;
-            document.getElementById('finalScoreDisplay').innerText = skor;
-
-            let reviewHtml = "";
-            let adaSalah = false;
-
-            quizData.forEach((q, i) => {
-                if (userAnswers[i] !== q.answer) {
-                    adaSalah = true;
-                    let userAnsText = q.options.find(o => o.id === userAnswers[i])?.text || "Tidak dijawab";
-                    let correctAnsText = q.options.find(o => o.id === q.answer).text;
-
-                    reviewHtml += `
-                        <div class="bg-white p-4 md:p-6 border-2 border-red-100 rounded-2xl shadow-sm text-left">
-                            <p class="font-bold text-slate-800 mb-3 md:mb-4 text-sm md:text-lg">${i + 1}. ${q.question}</p>
-                            <div class="bg-red-50 p-2.5 md:p-3 rounded-xl mb-2">
-                                <p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Anda:</p>
-                                <p class="text-red-600 font-semibold text-xs md:text-base">${userAnswers[i]}. ${userAnsText}</p>
-                            </div>
-                            <div class="bg-green-50 p-2.5 md:p-3 rounded-xl">
-                                <p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Benar:</p>
-                                <p class="text-green-600 font-bold text-xs md:text-base">${q.answer}. ${correctAnsText}</p>
-                            </div>
-                        </div>
-                    `;
+            // C. Auto-Refresh jika berpindah Tab atau Jendela
+            const _0xAntiCheat = function() {
+                // Eksekusi HANYA JIKA sedang ngerjain soal (bukan di halaman login & belum submit)
+                if(!_0xDone && !document.getElementById('quizSection').classList.contains('hidden')) {
+                    alert("⚠️ PELANGGARAN TERDETEKSI ⚠️\nAnda terdeteksi meninggalkan/berpindah dari halaman ujian. Halaman akan dimuat ulang dan semua progress Anda dihapus.");
+                    window.location.reload();
                 }
+            };
+            document.addEventListener("visibilitychange", function() { if(document.hidden) _0xAntiCheat(); });
+            window.addEventListener("blur", _0xAntiCheat);
+
+            // == 3. LOGIKA UJIAN ==
+
+            const _0xGetId = (id) => document.getElementById(id);
+            const _0xShfl = (a) => { for(let i=a.length-1; i>0; i--){ let j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } };
+
+            _0xGetId('nimInput').addEventListener('input', function() {
+                const _0xBtn = _0xGetId('btnMulai');
+                _0xGetId('errorBox').classList.add('hidden');
+                this.value.trim().length > 0 ? _0xBtn.classList.remove('hidden') : _0xBtn.classList.add('hidden');
             });
 
-            if (adaSalah) {
-                document.getElementById('reviewContainer').innerHTML = reviewHtml;
-                document.getElementById('reviewWrapper').classList.remove('hidden');
+            function _0xLShow(t) { _0xGetId('loadingText').innerText = t; _0xGetId('loadingOverlay').classList.remove('hidden'); }
+            function _0xLHide() { _0xGetId('loadingOverlay').classList.add('hidden'); }
+
+            window._0xGlobalStart = async function() {
+                const _0xVal = _0xGetId('nimInput').value.trim();
+                if(!_0xStd[_0xVal]) {
+                    _0xGetId('errorMsg').innerText = "NIM tidak terdaftar. Silakan cek kembali.";
+                    _0xGetId('errorBox').classList.remove('hidden');
+                    return;
+                }
+                _0xLShow("Memverifikasi data peserta...");
+                try {
+                    let _0xRes = await fetch(`${_0xUrl}?action=check&nim=${_0xVal}`);
+                    let _0xDat = await _0xRes.json();
+                    if(_0xDat.exists) {
+                        _0xLHide();
+                        _0xGetId('errorMsg').innerText = "Anda telah melakukan tes evaluasi. Hubungi koordinator jika ini sebuah kesalahan.";
+                        _0xGetId('errorBox').classList.remove('hidden');
+                        return;
+                    }
+                } catch(e) {}
+                
+                _0xLHide();
+                _0xCur.n = _0xVal; _0xCur.m = _0xStd[_0xVal];
+                _0xShfl(_0xQd);
+                _0xGetId('totalQuestionsNum').innerText = _0xQd.length;
+                _0xGetId('loginSection').classList.add('hidden');
+                _0xGetId('quizSection').classList.remove('hidden');
+                _0xGetId('studentNameDisplay').innerText = _0xCur.m;
+                _0xRndr();
+            };
+
+            function _0xRndr() {
+                const _0xQ = _0xQd[_0xIdx];
+                _0xGetId('currentQuestionNum').innerText = _0xIdx + 1;
+                _0xGetId('progressBar').style.width = `${((_0xIdx+1)/_0xQd.length)*100}%`;
+                
+                let _0xHtml = `<p class="text-base md:text-2xl text-slate-800 mb-4 md:mb-6 font-semibold leading-relaxed">${_0xIdx+1}. ${_0xQ.q}</p><div class="space-y-3 md:space-y-4">`;
+                _0xQ.o.forEach(_0xOpt => {
+                    _0xHtml += `<label class="option-label block cursor-pointer transition-transform duration-200"><input type="radio" name="q_opt" value="${_0xOpt.i}" class="hidden" onchange="_0xGlobalEnable()"><div class="flex items-center p-3 md:p-5 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all"><div class="radio-circle w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-slate-300 mr-3 md:mr-5 transition-colors shrink-0"></div><span class="text-slate-700 font-medium text-sm md:text-lg leading-snug"><span class="font-bold mr-2 text-slate-400">${_0xOpt.i}.</span> ${_0xOpt.t}</span></div></label>`;
+                });
+                _0xHtml += `</div>`;
+                
+                _0xGetId('questionContainer').innerHTML = _0xHtml;
+                _0xGetId('btnNext').classList.add('hidden');
+                _0xGetId('btnSubmit').classList.add('hidden');
             }
-        }
+
+            window._0xGlobalEnable = function() {
+                _0xIdx < _0xQd.length - 1 ? _0xGetId('btnNext').classList.remove('hidden') : _0xGetId('btnSubmit').classList.remove('hidden');
+            };
+
+            window._0xGlobalNext = function() {
+                const _0xO = document.getElementsByName('q_opt');
+                for(let i=0; i<_0xO.length; i++) if(_0xO[i].checked) _0xAns[_0xIdx] = _0xO[i].value;
+                _0xIdx++; _0xRndr();
+            };
+
+            window._0xGlobalSubmit = async function() {
+                const _0xO = document.getElementsByName('q_opt');
+                for(let i=0; i<_0xO.length; i++) if(_0xO[i].checked) _0xAns[_0xIdx] = _0xO[i].value;
+
+                let _0xB = 0;
+                _0xAns.forEach((a, i) => { if(a === _0xQd[i].a) _0xB++; });
+                let _0xSkor = Math.round((_0xB / _0xQd.length) * 100);
+
+                _0xLShow("Menyimpan jawaban Anda...");
+                try {
+                    await fetch(_0xUrl, {
+                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nim: _0xCur.n, nama: _0xCur.m, jumlahBenar: _0xB, nilai: _0xSkor })
+                    });
+                    
+                    _0xLHide();
+                    _0xDone = true; // Matikan anti-cheat tab reload karena sudah selesai
+                    _0xGetId('quizSection').classList.add('hidden');
+                    _0xGetId('resultSection').classList.remove('hidden');
+                    _0xGetId('resultDesc').innerHTML = `Terima kasih, <b class="text-slate-700">${_0xCur.m}</b>.<br>Anda berhasil menjawab benar ${_0xB} dari ${_0xQd.length} soal.`;
+                    _0xGetId('finalScoreDisplay').innerText = _0xSkor;
+
+                    let _0xRev = "";
+                    let _0xErr = false;
+                    _0xQd.forEach((q, i) => {
+                        if(_0xAns[i] !== q.a) {
+                            _0xErr = true;
+                            let _0xUAns = q.o.find(x => x.i === _0xAns[i])?.t || "Tidak dijawab";
+                            let _0xCAns = q.o.find(x => x.i === q.a).t;
+                            _0xRev += `<div class="bg-white p-4 md:p-6 border-2 border-red-100 rounded-2xl shadow-sm text-left"><p class="font-bold text-slate-800 mb-3 md:mb-4 text-sm md:text-lg">${i+1}. ${q.q}</p><div class="bg-red-50 p-2.5 md:p-3 rounded-xl mb-2"><p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Anda:</p><p class="text-red-600 font-semibold text-xs md:text-base">${_0xAns[i]}. ${_0xUAns}</p></div><div class="bg-green-50 p-2.5 md:p-3 rounded-xl"><p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Benar:</p><p class="text-green-600 font-bold text-xs md:text-base">${q.a}. ${_0xCAns}</p></div></div>`;
+                        }
+                    });
+
+                    if(_0xErr) {
+                        _0xGetId('reviewContainer').innerHTML = _0xRev;
+                        _0xGetId('reviewWrapper').classList.remove('hidden');
+                    }
+                } catch (error) {
+                    _0xLHide(); alert("Terjadi kesalahan jaringan saat mengirim data.");
+                }
+            };
+        })();
     </script>
 </body>
 </html>
