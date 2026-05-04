@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ujian Kompetensi OTKP</title>
+    <title>Ujian Kompetensi OTKP - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -18,6 +19,7 @@
     <style>
         body { font-family: 'Poppins', sans-serif; }
         
+        /* Style untuk Opsi Jawaban */
         .option-label input:checked + div {
             border-color: #3b82f6;
             background-color: #eff6ff;
@@ -28,49 +30,95 @@
             background-color: #3b82f6;
             box-shadow: inset 0 0 0 4px #eff6ff;
         }
+
+        /* Style untuk Grid Pemilihan Avatar */
+        .avatar-label input:checked + div {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4 antialiased">
 
-    <div class="w-full max-w-3xl mb-6 md:mb-8 text-center">
+    <div class="w-full max-w-3xl mb-6 md:mb-8 md:mt-6 mt-4 text-center">
         <h1 class="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Portal Ujian Evaluasi</h1>
-        <p class="text-sm md:text-base text-slate-500 mt-2 font-medium">Materi Penggajian dan Tunjangan Pegawai</p>
+        <p class="text-sm md:text-base text-slate-500 mt-2 font-medium">Materi Pemberhentian Pegawai</p>
     </div>
 
-    <div class="bg-white p-5 md:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 w-full max-w-3xl relative overflow-hidden">
+    <div class="bg-white p-5 md:p-10 md:mb-10 mb-4 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 w-full max-w-3xl relative overflow-hidden">
         
-        <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+        <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-center px-4">
+            <div id="loadingAvatarContainer" class="hidden mb-4 relative">
+                <img id="loadingMiniAvatar" src="" class="w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-full border-4 border-blue-100 shadow-lg animate-pulse" alt="Loading Avatar">
+                <div class="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+            </div>
             <svg class="animate-spin h-10 w-10 md:h-12 md:w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p id="loadingText" class="text-slate-700 font-semibold text-sm md:text-lg">Memproses data...</p>
+            <p id="loadingText" class="text-slate-800 font-bold text-sm md:text-lg mb-1">Memproses data...</p>
+            <p id="loadingSubText" class="text-slate-500 font-medium text-xs md:text-sm max-w-xs"></p>
         </div>
 
-        <div id="loginSection" class="text-center py-4 md:py-8">
-            <div class="w-16 h-16 md:w-24 md:h-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
-                <svg class="w-8 h-8 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+        <div id="loginSection" class="py-4 md:py-6">
+            <div class="text-center mb-8">
+                <h2 class="text-xl md:text-3xl font-black text-slate-800 mb-2">Siapkan Karaktermu!</h2>
+                <p class="text-xs md:text-base text-slate-500 font-medium">Pilih avatar yang paling keren untuk mewakilimu.</p>
             </div>
-            <h2 class="text-lg md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">Verifikasi Peserta</h2>
-            <p class="text-xs md:text-base text-slate-500 mb-6 md:mb-10 font-medium">Silakan masukkan NIM akhir kalian untuk memulai tes.</p>
             
-            <div class="max-w-xs mx-auto text-left">
-                <label for="nimInput" class="block text-xs md:text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">NIM Akhir</label>
-                <input type="text" id="nimInput" class="w-full px-4 py-3 md:px-5 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 focus:outline-none transition-colors mb-4 md:mb-5 text-center font-bold text-base md:text-xl" placeholder="Contoh: 31" autocomplete="off">
-                <button id="btnMulai" onclick="_0xGlobalStart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 md:py-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 hidden text-sm md:text-base">
-                    Mulai Ujian Sekarang
+            <div class="max-w-md mx-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-widest">Pilih Avatar</label>
+                    <button onclick="generateNewAvatars()" class="text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-full transition-all flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        GANTI KOLEKSI
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-4 gap-3 md:gap-4 mb-6" id="avatarGrid">
+                    </div>
+
+                <div class="mb-8">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Atau Custom Pake Kode Rahasiamu:</label>
+                    <div class="flex items-center gap-2 w-full">
+                        <input type="text" id="customSeedInput" placeholder="Ketik apa aja..." 
+                            class="min-w-0 flex-1 px-4 py-2.5 bg-slate-50 border-2 border-slate-100 rounded-xl text-sm focus:border-blue-400 outline-none transition-all">
+                        
+                        <button onclick="applyCustomAvatar()" 
+                                class="shrink-0 bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-black transition-all active:scale-95">
+                            PAKAI
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-6 mb-6">
+                    <label for="namaInput" class="block text-xs font-bold text-slate-700 mb-3 uppercase tracking-wide text-center">Nama Lengkap Kamu</label>
+                    <input type="text" id="namaInput" oninput="checkLoginRequirements()" class="w-full px-5 py-4 border-2 border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 focus:outline-none transition-colors text-center font-bold text-lg" placeholder="Contoh: Donald Trump" autocomplete="off">
+                </div>
+                
+                <button id="btnMulai" onclick="_0xGlobalStart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/30 opacity-50 cursor-not-allowed text-base flex justify-center items-center gap-3" disabled>
+                    MULAI UJIAN SEKARANG
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                 </button>
-                <div id="errorBox" class="bg-red-50 text-red-600 border border-red-200 text-xs md:text-sm p-3 md:p-4 rounded-xl mt-4 md:mt-5 hidden">
+                
+                <div id="errorBox" class="bg-red-50 text-red-600 border border-red-200 text-xs p-4 rounded-xl mt-5 hidden">
                     <p id="errorMsg" class="font-semibold text-center"></p>
                 </div>
             </div>
         </div>
 
         <div id="quizSection" class="hidden">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-6 border-b border-slate-100 pb-3 md:pb-5 gap-3 md:gap-4">
-                <div>
-                    <p class="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Peserta Ujian</p>
-                    <p id="studentNameDisplay" class="font-bold text-slate-800 text-base md:text-xl"></p>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 border-b border-slate-100 pb-3 md:pb-5 gap-3 md:gap-4">
+                <div class="flex items-center gap-3">
+                    <img id="activeAvatar" src="" class="w-10 h-10 md:w-12 md:h-12 bg-slate-100 rounded-full border-2 border-slate-200" alt="Player Avatar">
+                    <div>
+                        <p class="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-widest mb-0.5">Peserta</p>
+                        <p id="studentNameDisplay" class="font-bold text-slate-800 text-base md:text-lg"></p>
+                    </div>
                 </div>
                 <div class="w-full md:w-auto text-left md:text-right">
                     <div class="inline-flex items-center bg-blue-50 text-blue-700 text-[11px] md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-blue-100">
@@ -84,14 +132,13 @@
                 <div id="progressBar" class="bg-blue-500 h-1.5 md:h-2 rounded-full transition-all duration-500 ease-out" style="width: 10%"></div>
             </div>
 
-            <div id="questionContainer" class="mb-5 md:mb-8 min-h-[200px] md:min-h-[300px]">
-                </div>
+            <div id="questionContainer" class="mb-5 md:mb-8 min-h-[200px] md:min-h-[300px]"></div>
 
             <div class="flex flex-col-reverse md:flex-row justify-between items-center mt-5 md:mt-8 pt-4 md:pt-6 border-t border-slate-100 gap-3 md:gap-4">
-                <p class="text-[10px] md:text-xs text-slate-400 font-medium text-center md:text-left">Pastikan jawaban yang diisi sudah benar sebelum lanjut.</p>
+                <p class="text-[10px] md:text-xs text-slate-400 font-medium text-center md:text-left">© 2026 - Ujian Kompetensi</p>
                 <div class="w-full md:w-auto">
                     <button id="btnNext" onclick="_0xGlobalNext()" class="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg hidden text-sm md:text-base">
-                        Selanjutnya
+                        Lanjut
                     </button>
                     <button id="btnSubmit" onclick="_0xGlobalSubmit()" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-6 md:py-3 md:px-10 rounded-xl transition shadow-lg shadow-green-500/30 hidden text-sm md:text-base">
                         Selesaikan Ujian
@@ -101,15 +148,17 @@
         </div>
 
         <div id="resultSection" class="hidden py-4 md:py-8">
-            <div class="text-center mb-6 md:mb-10 border-b border-slate-100 pb-6 md:pb-10">
-                <div class="w-16 h-16 md:w-24 md:h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
-                    <svg class="w-8 h-8 md:w-12 md:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            <div class="text-center mb-6 md:mb-10 border-b border-slate-100 pb-6 md:pb-10 relative">
+                <div class="relative inline-block mx-auto mb-4 md:mb-6">
+                    <img id="resultAvatar" src="" class="w-20 h-20 md:w-28 md:h-28 bg-slate-100 rounded-full border-4 border-white shadow-xl relative z-10" alt="Player Result Avatar">
+                    <div id="resultStatusIcon" class="absolute -bottom-2 -right-2 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center z-20 border-2 border-white"></div>
                 </div>
-                <h2 class="text-2xl md:text-4xl font-extrabold text-slate-800 mb-2 md:mb-3">Ujian Selesai!</h2>
-                <p id="resultDesc" class="text-slate-500 font-medium mb-5 md:mb-8 text-sm md:text-lg">Jawaban Anda telah berhasil direkam.</p>
-                <div class="inline-block bg-white border-2 border-slate-100 shadow-sm rounded-2xl px-8 py-4 md:px-12 md:py-6">
+
+                <div id="resultDesc" class="text-slate-600 font-medium mb-5 md:mb-8 text-sm md:text-lg"></div>
+                
+                <div class="inline-block bg-white border-2 border-slate-100 shadow-sm rounded-2xl px-8 py-4 md:px-12 md:py-6 relative z-10">
                     <p class="text-[10px] md:text-sm text-slate-400 font-bold uppercase tracking-widest mb-1 md:mb-2">Skor Akhir Anda</p>
-                    <p id="finalScoreDisplay" class="text-4xl md:text-6xl font-black text-blue-600 tracking-tighter"></p>
+                    <p id="finalScoreDisplay" class="text-5xl md:text-7xl font-black text-blue-600 tracking-tighter"></p>
                 </div>
             </div>
 
@@ -120,8 +169,7 @@
                     </div>
                     Review Jawaban Salah
                 </h3>
-                <div id="reviewContainer" class="space-y-3 md:space-y-4">
-                </div>
+                <div id="reviewContainer" class="space-y-3 md:space-y-4"></div>
             </div>
         </div>
 
@@ -131,42 +179,34 @@
         (function() {
             // == 1. DATA & KONFIGURASI ==
             const _0xUrl = "https://script.google.com/macros/s/AKfycby2l03w5tUt43-HnVzQk0nzrUORB-sDkyRDW61RegqxKFLTwiTz2BvxF-N8eYC_4vF0-g/exec";
-            const _0xStd = { "31": "Geri Maulana Saputra", "32": "Khairunnisa Pratiwi", "34": "Rayhan Agra Rivaldi", "42": "Annisa Mahyana Billah", "36": "Siti Muzayyanah", "51": "Iqlima Nuroktavias", "52": "Fikri Gumilang", "61": "Siti Aliya Habibah", "69": "Ari Brebes", "72": "Firza Widyadana", "74": "Azzam Rusyan Ilmu", "89": "Nisa Ainur", "99": "El Hadzieq Maula Sayyidina" };
             
-            // Soal dijaga dalam teks murni agar 100% bebas dari typo
+            // SOAL PEMBERHENTIAN PEGAWAI
             let _0xQd = [
-                { q: "Apa definisi kompensasi menurut Dr. Wirawan?", o: [ { i: "A", t: "Balas jasa yang diberikan secara periodik sebulan sekali." }, { i: "B", t: "Imbalan uang dan nonuang yang diterima tenaga kerja sebagai hasil hubungan ketenagakerjaan." }, { i: "C", t: "Upah kerja yang dibayar dalam waktu yang tetap berdasarkan KBBI." }, { i: "D", t: "Kompensasi tambahan yang bertujuan mengikat pegawai agar tetap bekerja." } ], a: String.fromCharCode(66) },
-                { q: "Manakah yang termasuk dalam kategori upah dasar (basic pay)?", o: [ { i: "A", t: "Bonus dan komisi." }, { i: "B", t: "Tunjangan keluarga dan tunjangan jabatan." }, { i: "C", t: "Gaji (salary) dan upah (wage)." }, { i: "D", t: "Program asuransi dan jaminan hari tua." } ], a: String.fromCharCode(67) },
-                { q: "Upah yang diberikan kepada pegawai karena kinerjanya melampaui standar yang telah ditetapkan organisasi disebut...", o: [ { i: "A", t: "Upah kinerja (merit pay)." }, { i: "B", t: "Upah insentif (incentive pay)." }, { i: "C", t: "Upah yang ditunda (differed pay)." }, { i: "D", t: "Upah ketika tidak bekerja." } ], a: String.fromCharCode(66) },
-                { q: "Apa yang dimaksud dengan upah per potong (piece rate) dalam jenis upah insentif?", o: [ { i: "A", t: "Upah berdasarkan persentase dari kinerja." }, { i: "B", t: "Upah tambahan dari sebagian keuntungan perusahaan." }, { i: "C", t: "Upah berdasarkan setiap unit produk yang diproduksi atau dijual." }, { i: "D", t: "Upah ekstra karena bekerja pada giliran kerja yang tidak disukai." } ], a: String.fromCharCode(67) },
-                { q: "Fasilitas seperti perumahan, uang transportasi, dan uang makan yang disediakan untuk kelancaran tugas pegawai dikategorikan sebagai...", o: [ { i: "A", t: "Protection program." }, { i: "B", t: "Services and perquisites." }, { i: "C", t: "Upah ketika tidak bekerja." }, { i: "D", t: "Tunjangan tetap." } ], a: String.fromCharCode(66) },
-                { q: "Tunjangan yang diberikan kepada PNS yang menduduki jabatan tertentu seperti guru, dosen, hakim, dan jaksa adalah...", o: [ { i: "A", t: "Tunjangan jabatan." }, { i: "B", t: "Tunjangan fungsional." }, { i: "C", t: "Tunjangan kemahalan." }, { i: "D", t: "Tunjangan sertifikasi." } ], a: String.fromCharCode(66) },
-                { q: "Tunjangan Hari Raya (THR) bagi PNS yang dikenal sebagai \"gaji ke-14\" termasuk dalam jenis...", o: [ { i: "A", t: "Tunjangan tetap." }, { i: "B", t: "Tunjangan tidak tetap." }, { i: "C", t: "Tunjangan fungsional." }, { i: "D", t: "Tunjangan kinerja daerah." } ], a: String.fromCharCode(66) },
-                { q: "Sistem penggajian yang merupakan perpaduan antara sistem skala tunggal dan skala ganda disebut...", o: [ { i: "A", t: "Sistem skala gabungan." }, { i: "B", t: "Sistem skala prestasi." }, { i: "C", t: "Sistem skala fungsional." }, { i: "D", t: "Sistem skala tunjangan." } ], a: String.fromCharCode(65) },
-                { q: "Berdasarkan PP No. 78 Tahun 2015, berapa besaran minimal gaji pokok dari total gaji tetap?", o: [ { i: "A", t: "50%" }, { i: "B", t: "60%" }, { i: "C", t: "75%" }, { i: "D", t: "100%" } ], a: String.fromCharCode(67) },
-                { q: "Apa batas maksimum total pemotongan upah yang dapat dilakukan perusahaan terhadap gaji pegawai?", o: [ { i: "A", t: "25%" }, { i: "B", t: "50%" }, { i: "C", t: "75%" }, { i: "D", t: "Tidak ada batas maksimum asalkan ada surat kuasa." } ], a: String.fromCharCode(66) }
+                { q: "Apa pengertian dasar dari pemberhentian pegawai?", o: [ { i: "A", t: "Proses perpindahan pegawai dari satu divisi ke divisi lain dalam perusahaan yang sama tanpa mengubah gaji." }, { i: "B", t: "Pemutusan hubungan kerja antara pegawai dengan instansi/perusahaan yang mengakibatkan berakhirnya hak dan kewajiban pegawai." }, { i: "C", t: "Kegiatan evaluasi kinerja tahunan untuk menentukan apakah pegawai naik jabatan atau tidak." }, { i: "D", t: "Masa percobaan bagi pegawai baru sebelum diangkat menjadi pegawai tetap di sebuah instansi." }, { i: "E", t: "Pemberian sanksi teguran tertulis kepada pegawai yang terlambat masuk kerja selama tiga hari." } ], a: "B" },
+                { q: "Apa syarat administrasi utama jika seorang pegawai ingin mengundurkan diri (resign)?", o: [ { i: "A", t: "Pegawai harus mengajukan surat permohonan berhenti minimal 30 hari sebelum tanggal berhenti agar ada waktu untuk transisi tugas." }, { i: "B", t: "Pegawai wajib membayar denda sebesar sepuluh kali lipat gaji kepada perusahaan sebelum pergi." }, { i: "C", t: "Pegawai harus mencari pengganti dirinya sendiri dari luar perusahaan sebelum diperbolehkan keluar." }, { i: "D", t: "Pegawai wajib menyelesaikan masa kerja minimal 10 tahun baru boleh mengajukan surat pengunduran diri." }, { i: "E", t: "Pegawai bisa langsung berhenti bekerja hari itu juga tanpa perlu memberitahu atasan atau HRD." } ], a: "A" },
+                { q: "Menurut aturan PNS, pada usia berapakah seorang Pejabat Administrasi akan diberhentikan dengan hormat (pensiun)?", o: [ { i: "A", t: "Pegawai akan dipensiunkan secara otomatis saat mencapai usia 65 tahun seperti dosen atau pejabat fungsional utama." }, { i: "B", t: "Pegawai akan dipensiunkan pada usia 50 tahun jika mengajukan pensiun dini atas permintaan sendiri." }, { i: "C", t: "Pegawai akan diberhentikan dengan hormat karena mencapai Batas Usia Pensiun (BUP) yaitu 58 tahun." }, { i: "D", t: "Pegawai akan diberhentikan pada usia 60 tahun sama seperti aturan untuk Guru dan Pejabat Pimpinan Tinggi." }, { i: "E", t: "Pegawai tidak memiliki batas usia pensiun dan boleh bekerja seumur hidup selama masih sehat." } ], a: "C" },
+                { q: "Apa perbedaan hak antara PNS dan PPPK (Pegawai Pemerintah dengan Perjanjian Kerja) menurut UU ASN No. 20 Tahun 2023?", o: [ { i: "A", t: "PNS mendapatkan uang pensiun, sedangkan PPPK sama sekali tidak berhak mendapatkan jaminan pensiun maupun jaminan hari tua." }, { i: "B", t: "PPPK hanya boleh dikontrak selama 1 tahun dan setelah itu harus diberhentikan tanpa pesangon." }, { i: "C", t: "Tidak ada perbedaan hak, karena sekarang PPPK pun berhak mendapatkan Jaminan Pensiun dan Jaminan Hari Tua sama seperti PNS." }, { i: "D", t: "PNS boleh pindah ke swasta, sedangkan PPPK dilarang keras pindah instansi seumur hidup." }, { i: "E", t: "Gaji PPPK dipotong lebih besar daripada PNS untuk biaya administrasi negara." } ], a: "C" },
+                { q: "Apa yang dimaksud dengan perundingan Bipartit dalam prosedur PHK pegawai swasta?", o: [ { i: "A", t: "Perundingan yang dilakukan di pengadilan dengan hakim sebagai pengambil keputusan mutlak." }, { i: "B", t: "Musyawarah antara dua pihak, yaitu pekerja dan pengusaha, untuk menyelesaikan perselisihan secara internal sebelum ke dinas tenaga kerja." }, { i: "C", t: "Proses mediasi yang wajib dihadiri oleh pejabat dari Dinas Tenaga Kerja (Disnaker) sebagai penengah." }, { i: "D", t: "Diskusi antara serikat pekerja dari berbagai perusahaan untuk melakukan demonstrasi besar-besaran." }, { i: "E", t: "Rapat pemegang saham perusahaan untuk menentukan nasib karyawan tanpa melibatkan karyawan itu sendiri." } ], a: "B" },
+                { q: "Apa kewajiban utama seorang pegawai setelah resmi menerima surat keputusan pemberhentian?", o: [ { i: "A", t: "Pegawai wajib tetap datang ke kantor setiap hari meskipun tidak diberikan gaji dan tunjangan lagi." }, { i: "B", t: "Pegawai wajib menuntut pesangon sebesar-besarnya kepada perusahaan melalui jalur hukum." }, { i: "C", t: "Pegawai wajib mengembalikan seluruh aset negara/perusahaan seperti kendaraan dinas, laptop, dan dokumen penting." }, { i: "D", t: "Pegawai wajib menghapus semua data pekerjaan di komputer agar tidak bisa dipakai oleh penggantinya." }, { i: "E", t: "Pegawai harus mencari pekerjaan baru bagi teman-temannya yang masih bekerja di kantor tersebut." } ], a: "C" },
+                { q: "Apa akibatnya jika seorang PNS diberhentikan Tidak Dengan Hormat (PTDH)?", o: [ { i: "A", t: "Pegawai tersebut tetap mendapatkan gaji bulanan sebesar 50% dari gaji pokok terakhirnya." }, { i: "B", t: "Pegawai tersebut kehilangan hak pensiunnya dan masa pengabdiannya dianggap hangus oleh negara." }, { i: "C", t: "Pegawai tersebut akan dipindahkan ke instansi lain yang lebih kecil di daerah terpencil." }, { i: "D", t: "Pegawai tersebut masih berhak mendapatkan tunjangan hari tua dan fasilitas kesehatan dari pemerintah." }, { i: "E", t: "Pegawai tersebut hanya diturunkan pangkatnya satu tingkat selama tiga tahun." } ], a: "B" },
+                { q: "Dalam kondisi apa perusahaan swasta boleh melakukan PHK karena alasan efisiensi?", o: [ { i: "A", t: "Ketika perusahaan mengalami kerugian, tutup, atau merger, sehingga terpaksa mengurangi jumlah karyawan yang sebenarnya tidak bersalah." }, { i: "B", t: "Ketika pegawai melakukan kesalahan fatal seperti mencuri uang perusahaan atau membocorkan rahasia dagang." }, { i: "C", t: "Ketika pegawai sering terlambat datang ke kantor dan tidak mencapai target penjualan bulanan." }, { i: "D", t: "Ketika atasan tidak menyukai kepribadian pegawai tersebut secara pribadi tanpa alasan profesional." }, { i: "E", t: "Ketika pegawai menolak untuk bekerja lembur di hari libur nasional tanpa bayaran." } ], a: "A" },
+                { q: "Kompensasi apa yang diterima pegawai swasta jika di-PHK (bukan karena kesalahan berat)?", o: [ { i: "A", t: "Mendapatkan gaji pensiun bulanan seumur hidup yang dibayarkan oleh perusahaan setiap tanggal 1." }, { i: "B", t: "Menerima Uang Pesangon, Uang Penghargaan Masa Kerja, dan Uang Penggantian Hak sesuai perhitungan undang-undang." }, { i: "C", t: "Hanya mendapatkan ucapan terima kasih dan surat referensi kerja tanpa uang tunai sedikitpun." }, { i: "D", t: "Mendapatkan jaminan pekerjaan baru di perusahaan lain yang menjadi mitra perusahaan lama." }, { i: "E", t: "Tetap mendapatkan fasilitas kesehatan dan asuransi dari kantor lama selama 5 tahun ke depan." } ], a: "B" },
+                { q: "Siapa yang berwenang melakukan verifikasi berkas usulan pemberhentian PNS sebelum SK diterbitkan?", o: [ { i: "A", t: "Menteri Keuangan yang bertugas mencairkan dana anggaran gaji pegawai negeri." }, { i: "B", t: "Kepala Dinas masing-masing daerah tanpa perlu melapor ke pusat." }, { i: "C", t: "Badan Kepegawaian Negara (BKN) yang memeriksa kelengkapan administrasi dan kesesuaian hukum." }, { i: "D", t: "PT Taspen yang mengurus pembayaran tabungan hari tua pegawai." }, { i: "E", t: "Pihak kepolisian untuk memastikan pegawai tidak terlibat kasus kriminal." } ], a: "C" }
             ];
 
-            let _0xCur = { n: "", m: "" };
+            let _0xCur = { n: "-", m: "", avatar: "" };
             let _0xIdx = 0;
             let _0xAns = [];
-            let _0xDone = false; // Flag status ujian
+            let _0xDone = false; 
 
             // == 2. PROTEKSI & ANTI-CHEAT ==
-            
-            // A. Cegah Klik Kanan
             document.addEventListener('contextmenu', e => e.preventDefault());
-            
-            // B. Cegah F12 & Inspect Element Shortcuts
             document.onkeydown = function(e) {
                 if(e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C" || e.key === "i" || e.key === "j" || e.key === "c")) || (e.ctrlKey && (e.key === "U" || e.key === "u"))) {
                     e.preventDefault(); return false;
                 }
             };
-
-            // C. Auto-Refresh jika berpindah Tab atau Jendela
             const _0xAntiCheat = function() {
-                // Eksekusi HANYA JIKA sedang ngerjain soal (bukan di halaman login & belum submit)
                 if(!_0xDone && !document.getElementById('quizSection').classList.contains('hidden')) {
                     alert("⚠️ PELANGGARAN TERDETEKSI ⚠️\nAnda terdeteksi meninggalkan/berpindah dari halaman ujian. Halaman akan dimuat ulang dan semua progress Anda dihapus.");
                     window.location.reload();
@@ -175,67 +215,146 @@
             document.addEventListener("visibilitychange", function() { if(document.hidden) _0xAntiCheat(); });
             window.addEventListener("blur", _0xAntiCheat);
 
-            // == 3. LOGIKA UJIAN ==
+            // == 3. SISTEM AVATAR BARU ==
+            const styles = ['adventurer', 'avataaars', 'big-smile', 'bottts', 'fun-emoji', 'micah', 'pixel-art'];
+            
+            window.generateNewAvatars = function() {
+                const grid = document.getElementById('avatarGrid');
+                grid.innerHTML = "";
+                for(let i=0; i<8; i++) {
+                    const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+                    const randomSeed = Math.random().toString(36).substring(7);
+                    const url = `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${randomSeed}`;
+                    grid.innerHTML += `
+                        <label class="avatar-label cursor-pointer transition-all duration-300">
+                            <input type="radio" name="avatar_opt" value="${url}" class="hidden" onchange="checkLoginRequirements()">
+                            <div class="border-2 border-slate-200 rounded-2xl p-2 flex items-center justify-center transition-all bg-slate-50 hover:bg-slate-100 h-full">
+                                <img src="${url}" class="w-12 h-12 md:w-16 md:h-16 object-contain">
+                            </div>
+                        </label>
+                    `;
+                }
+            };
 
-            const _0xGetId = (id) => document.getElementById(id);
+            window.applyCustomAvatar = function() {
+                const seed = document.getElementById('customSeedInput').value.trim();
+                if(!seed) return;
+                
+                // Gunakan style adventurer yang keren
+                const url = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seed)}`;
+                const grid = document.getElementById('avatarGrid');
+                
+                // Buat element baru untuk preview custom
+                const customBox = `
+                    <label class="avatar-label cursor-pointer transition-all duration-300 col-span-4 mb-2">
+                        <input type="radio" name="avatar_opt" value="${url}" class="hidden" checked onchange="checkLoginRequirements()">
+                        <div class="border-2 border-blue-400 rounded-2xl p-3 md:p-4 flex items-center justify-between transition-all bg-blue-50">
+                            <div class="flex items-center gap-3">
+                                <img src="${url}" class="w-12 h-12 md:w-16 md:h-16">
+                                <div class="text-left">
+                                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight">Avatar Custom Aktif</p>
+                                    <p class="text-[10px] text-blue-400">"${seed}"</p>
+                                </div>
+                            </div>
+                            <div class="bg-blue-500 text-white p-1 rounded-full">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </div>
+                    </label>
+                `;
+                
+                // Reset grid sebentar dan masukkan custom box di paling atas
+                generateNewAvatars(); 
+                grid.insertAdjacentHTML('afterbegin', customBox);
+                
+                checkLoginRequirements();
+                
+                // Tambahkan feedback suara kecil kalau mau (opsional)
+                console.log("Avatar updated with seed:", seed);
+            };
+
+            // INITIALIZE GRID AVATAR
+            generateNewAvatars();
+
+            window.checkLoginRequirements = function() {
+                const nama = document.getElementById('namaInput').value.trim();
+                const avatar = document.querySelector('input[name="avatar_opt"]:checked');
+                const btnMulai = document.getElementById('btnMulai');
+                
+                document.getElementById('errorBox').classList.add('hidden');
+
+                if(nama.length > 2 && avatar) {
+                    btnMulai.disabled = false;
+                    btnMulai.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btnMulai.disabled = true;
+                    btnMulai.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            };
+
+            // == 4. LOGIKA LOADING ==
+            function _0xLShow(t, sub, showAvatar = false) { 
+                document.getElementById('loadingText').innerText = t; 
+                document.getElementById('loadingSubText').innerText = sub;
+                document.getElementById('loadingOverlay').classList.remove('hidden'); 
+                if(showAvatar && _0xCur.avatar) {
+                    document.getElementById('loadingMiniAvatar').src = _0xCur.avatar;
+                    document.getElementById('loadingAvatarContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('loadingAvatarContainer').classList.add('hidden');
+                }
+            }
+            function _0xLHide() { document.getElementById('loadingOverlay').classList.add('hidden'); }
+
+            // == 5. LOGIKA UJIAN ==
             const _0xShfl = (a) => { for(let i=a.length-1; i>0; i--){ let j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } };
 
-            _0xGetId('nimInput').addEventListener('input', function() {
-                const _0xBtn = _0xGetId('btnMulai');
-                _0xGetId('errorBox').classList.add('hidden');
-                this.value.trim().length > 0 ? _0xBtn.classList.remove('hidden') : _0xBtn.classList.add('hidden');
-            });
-
-            function _0xLShow(t) { _0xGetId('loadingText').innerText = t; _0xGetId('loadingOverlay').classList.remove('hidden'); }
-            function _0xLHide() { _0xGetId('loadingOverlay').classList.add('hidden'); }
-
-            window._0xGlobalStart = async function() {
-                const _0xVal = _0xGetId('nimInput').value.trim();
-                if(!_0xStd[_0xVal]) {
-                    _0xGetId('errorMsg').innerText = "NIM tidak terdaftar. Silakan cek kembali.";
-                    _0xGetId('errorBox').classList.remove('hidden');
+            window._0xGlobalStart = function() {
+                _0xCur.m = document.getElementById('namaInput').value.trim();
+                _0xCur.avatar = document.querySelector('input[name="avatar_opt"]:checked').value;
+                
+                if(localStorage.getItem('ujianPemberhentianPegawaiSelesai') === 'true') {
+                    document.getElementById('errorMsg').innerText = "Maaf, Perangkat (Device) ini sudah digunakan untuk mengerjakan ujian. Anda tidak dapat mengisi dua kali.";
+                    document.getElementById('errorBox').classList.remove('hidden');
                     return;
                 }
-                _0xLShow("Memverifikasi data peserta...");
-                try {
-                    let _0xRes = await fetch(`${_0xUrl}?action=check&nim=${_0xVal}`);
-                    let _0xDat = await _0xRes.json();
-                    if(_0xDat.exists) {
-                        _0xLHide();
-                        _0xGetId('errorMsg').innerText = "Anda telah melakukan tes evaluasi. Hubungi koordinator jika ini sebuah kesalahan.";
-                        _0xGetId('errorBox').classList.remove('hidden');
-                        return;
-                    }
-                } catch(e) {}
+
+                _0xLShow("Mempersiapkan Ujian...", "Sedang menyinkronkan karakter " + _0xCur.m + " ke sistem...", true);
                 
-                _0xLHide();
-                _0xCur.n = _0xVal; _0xCur.m = _0xStd[_0xVal];
-                _0xShfl(_0xQd);
-                _0xGetId('totalQuestionsNum').innerText = _0xQd.length;
-                _0xGetId('loginSection').classList.add('hidden');
-                _0xGetId('quizSection').classList.remove('hidden');
-                _0xGetId('studentNameDisplay').innerText = _0xCur.m;
-                _0xRndr();
+                setTimeout(() => {
+                    _0xLHide();
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('quizSection').classList.remove('hidden');
+                    
+                    document.getElementById('studentNameDisplay').innerText = _0xCur.m;
+                    document.getElementById('activeAvatar').src = _0xCur.avatar;
+                    document.getElementById('resultAvatar').src = _0xCur.avatar;
+                    
+                    _0xShfl(_0xQd);
+                    document.getElementById('totalQuestionsNum').innerText = _0xQd.length;
+                    
+                    _0xRndr();
+                }, 3000); // Delay 3 Detik di awal
             };
 
             function _0xRndr() {
                 const _0xQ = _0xQd[_0xIdx];
-                _0xGetId('currentQuestionNum').innerText = _0xIdx + 1;
-                _0xGetId('progressBar').style.width = `${((_0xIdx+1)/_0xQd.length)*100}%`;
+                document.getElementById('currentQuestionNum').innerText = _0xIdx + 1;
+                document.getElementById('progressBar').style.width = `${((_0xIdx+1)/_0xQd.length)*100}%`;
                 
-                let _0xHtml = `<p class="text-base md:text-2xl text-slate-800 mb-4 md:mb-6 font-semibold leading-relaxed">${_0xIdx+1}. ${_0xQ.q}</p><div class="space-y-3 md:space-y-4">`;
+                let _0xHtml = `<p class="text-base md:text-lg text-slate-800 mb-4 md:mb-6 font-semibold leading-relaxed">${_0xIdx+1}. ${_0xQ.q}</p><div class="space-y-3 md:space-y-4">`;
                 _0xQ.o.forEach(_0xOpt => {
-                    _0xHtml += `<label class="option-label block cursor-pointer transition-transform duration-200"><input type="radio" name="q_opt" value="${_0xOpt.i}" class="hidden" onchange="_0xGlobalEnable()"><div class="flex items-center p-3 md:p-5 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all"><div class="radio-circle w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-slate-300 mr-3 md:mr-5 transition-colors shrink-0"></div><span class="text-slate-700 font-medium text-sm md:text-lg leading-snug"><span class="font-bold mr-2 text-slate-400">${_0xOpt.i}.</span> ${_0xOpt.t}</span></div></label>`;
+                    _0xHtml += `<label class="option-label block cursor-pointer transition-transform duration-200"><input type="radio" name="q_opt" value="${_0xOpt.i}" class="hidden" onchange="_0xGlobalEnable()"><div class="flex items-center p-3 md:p-4 border-2 border-slate-200 rounded-2xl hover:border-blue-300 hover:bg-slate-50 transition-all"><div class="radio-circle w-5 h-5 md:w-5 md:h-5 rounded-full border-2 border-slate-300 mr-3 md:mr-4 transition-colors shrink-0"></div><span class="text-slate-700 font-medium text-sm md:text-base leading-snug"><span class="font-bold mr-2 text-slate-400">${_0xOpt.i}.</span> ${_0xOpt.t}</span></div></label>`;
                 });
                 _0xHtml += `</div>`;
                 
-                _0xGetId('questionContainer').innerHTML = _0xHtml;
-                _0xGetId('btnNext').classList.add('hidden');
-                _0xGetId('btnSubmit').classList.add('hidden');
+                document.getElementById('questionContainer').innerHTML = _0xHtml;
+                document.getElementById('btnNext').classList.add('hidden');
+                document.getElementById('btnSubmit').classList.add('hidden');
             }
 
             window._0xGlobalEnable = function() {
-                _0xIdx < _0xQd.length - 1 ? _0xGetId('btnNext').classList.remove('hidden') : _0xGetId('btnSubmit').classList.remove('hidden');
+                _0xIdx < _0xQd.length - 1 ? document.getElementById('btnNext').classList.remove('hidden') : document.getElementById('btnSubmit').classList.remove('hidden');
             };
 
             window._0xGlobalNext = function() {
@@ -252,35 +371,70 @@
                 _0xAns.forEach((a, i) => { if(a === _0xQd[i].a) _0xB++; });
                 let _0xSkor = Math.round((_0xB / _0xQd.length) * 100);
 
-                _0xLShow("Menyimpan jawaban Anda...");
+                // Delay 3 Detik di akhir
+                _0xLShow("Menghitung Skor...", "Mengirimkan lembar jawaban " + _0xCur.m + " ke server...", true);
+                
                 try {
+                    // PENGIRIMAN KE GOOGLE SHEET TETAP AMAN DENGAN PARAMETER LENGKAP
                     await fetch(_0xUrl, {
                         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ nim: _0xCur.n, nama: _0xCur.m, jumlahBenar: _0xB, nilai: _0xSkor })
                     });
                     
-                    _0xLHide();
-                    _0xDone = true; // Matikan anti-cheat tab reload karena sudah selesai
-                    _0xGetId('quizSection').classList.add('hidden');
-                    _0xGetId('resultSection').classList.remove('hidden');
-                    _0xGetId('resultDesc').innerHTML = `Terima kasih, <b class="text-slate-700">${_0xCur.m}</b>.<br>Anda berhasil menjawab benar ${_0xB} dari ${_0xQd.length} soal.`;
-                    _0xGetId('finalScoreDisplay').innerText = _0xSkor;
+                    setTimeout(() => {
+                        _0xLHide();
+                        _0xDone = true; 
+                        localStorage.setItem('ujianPemberhentianPegawaiSelesai', 'true');
+                        
+                        document.getElementById('quizSection').classList.add('hidden');
+                        document.getElementById('resultSection').classList.remove('hidden');
+                        document.getElementById('finalScoreDisplay').innerText = _0xSkor;
 
-                    let _0xRev = "";
-                    let _0xErr = false;
-                    _0xQd.forEach((q, i) => {
-                        if(_0xAns[i] !== q.a) {
-                            _0xErr = true;
-                            let _0xUAns = q.o.find(x => x.i === _0xAns[i])?.t || "Tidak dijawab";
-                            let _0xCAns = q.o.find(x => x.i === q.a).t;
-                            _0xRev += `<div class="bg-white p-4 md:p-6 border-2 border-red-100 rounded-2xl shadow-sm text-left"><p class="font-bold text-slate-800 mb-3 md:mb-4 text-sm md:text-lg">${i+1}. ${q.q}</p><div class="bg-red-50 p-2.5 md:p-3 rounded-xl mb-2"><p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Anda:</p><p class="text-red-600 font-semibold text-xs md:text-base">${_0xAns[i]}. ${_0xUAns}</p></div><div class="bg-green-50 p-2.5 md:p-3 rounded-xl"><p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Benar:</p><p class="text-green-600 font-bold text-xs md:text-base">${q.a}. ${_0xCAns}</p></div></div>`;
+                        // === LOGIKA ANIMASI & SUARA TETAP DIPERTAHANKAN ===
+                        const statusIcon = document.getElementById('resultStatusIcon');
+                        const descBox = document.getElementById('resultDesc');
+
+                        if (_0xSkor >= 80) {
+                            var duration = 4 * 1000;
+                            var animationEnd = Date.now() + duration;
+                            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+                            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+                            var interval = setInterval(function() {
+                                var timeLeft = animationEnd - Date.now();
+                                if (timeLeft <= 0) { return clearInterval(interval); }
+                                var particleCount = 50 * (timeLeft / duration);
+                                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                            }, 250);
+
+                            new Audio('https://www.myinstants.com/media/sounds/kids-cheering.mp3').play();
+                            statusIcon.className = "absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center z-20 border-4 border-white bg-green-500 text-white";
+                            statusIcon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                            descBox.innerHTML = `<div class="animate-bounce mt-2 mb-4"><span class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500">CONGRATULATIONS!!! 🎉</span></div>Luar Biasa, <b class="text-slate-800">${_0xCur.m}</b>!<br>Kamu menjawab benar ${_0xB} dari ${_0xQd.length} soal.`;
+                        } else {
+                            new Audio('https://www.myinstants.com/media/sounds/sadtrombone.mp3').play();
+                            statusIcon.className = "absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center z-20 border-4 border-white bg-red-500 text-white";
+                            statusIcon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            descBox.innerHTML = `Tetap Semangat, <b class="text-slate-800">${_0xCur.m}</b>!<br>Kamu menjawab benar ${_0xB} dari ${_0xQd.length} soal.<br><span class="text-red-500 font-bold mt-2 inline-block">Jangan menyerah, coba pelajari lagi materinya ya! ✊</span>`;
                         }
-                    });
 
-                    if(_0xErr) {
-                        _0xGetId('reviewContainer').innerHTML = _0xRev;
-                        _0xGetId('reviewWrapper').classList.remove('hidden');
-                    }
+                        // === REVIEW JAWABAN SALAH TETAP DIPERTAHANKAN ===
+                        let _0xRev = "";
+                        let _0xErr = false;
+                        _0xQd.forEach((q, i) => {
+                            if(_0xAns[i] !== q.a) {
+                                _0xErr = true;
+                                let _0xUAns = q.o.find(x => x.i === _0xAns[i])?.t || "Tidak dijawab";
+                                let _0xCAns = q.o.find(x => x.i === q.a).t;
+                                _0xRev += `<div class="bg-white p-4 md:p-5 border-2 border-red-100 rounded-2xl shadow-sm text-left"><p class="font-bold text-slate-800 mb-3 md:mb-4 text-sm md:text-base">${i+1}. ${q.q}</p><div class="bg-red-50 p-2.5 md:p-3 rounded-xl mb-2"><p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Anda:</p><p class="text-red-600 font-semibold text-xs md:text-sm">${_0xAns[i]}. ${_0xUAns}</p></div><div class="bg-green-50 p-2.5 md:p-3 rounded-xl"><p class="text-xs md:text-sm text-slate-600 font-medium">Jawaban Benar:</p><p class="text-green-600 font-bold text-xs md:text-sm">${q.a}. ${_0xCAns}</p></div></div>`;
+                            }
+                        });
+
+                        if(_0xErr) {
+                            document.getElementById('reviewContainer').innerHTML = _0xRev;
+                            document.getElementById('reviewWrapper').classList.remove('hidden');
+                        }
+                    }, 3000); // 3 detik loading untuk mensimulasikan upload & koreksi sistem
                 } catch (error) {
                     _0xLHide(); alert("Terjadi kesalahan jaringan saat mengirim data.");
                 }
